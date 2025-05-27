@@ -10,6 +10,6 @@ public class TestController {
 
     @GetMapping
     public String getSampleMessage() {
-        return "Hello, guys!";
+        return "Test endpoint";
     }
 }
