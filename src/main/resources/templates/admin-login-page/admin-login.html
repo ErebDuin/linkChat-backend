@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
     <head>
-        <meta charset="UTF-8">
+        <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Link-Chat Admin Login</title>
-        <link rel="stylesheet" th:href="@{/styles/admin-login-styles/style.css}" />
+        <link rel="stylesheet" th:href="@{/styles/admin-login-styles/style.css}"/>
     </head>
     <body>
         <div class="center">
             <h1>Admin Login</h1>
-            <form th:action="@{/api/admin/login}" method="post">
+            <form th:action="@{/api/admin-login}" method="post">
                 <div class="txt_field">
                     <input type="text" required>
                     <span></span>
@@ -19,12 +19,24 @@
                     <span></span>
                     <label>Password</label>
                 </div>
-                <div class="pass">Forgot Password?</div>
                 <input type="submit" value="Login">
-                <div class="signup_link">
-                    Not a member? <a href="#">Signup</a>
-                </div>
+                <div class="pass" onclick="openPopup()">Forgot Password?</div>
             </form>
         </div>
+        <div id="forgotModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closePopup()">&times;</span>
+                <h2>Forgot Password?</h2>
+                <form>
+                    <div class="txt_field">
+                        <input type="text" required>
+                        <span></span>
+                        <label>Enter your email</label>
+                    </div>
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+        </div>
+        <script th:src="@{/js/popup-modal.js}"></script>
     </body>
 </html>
