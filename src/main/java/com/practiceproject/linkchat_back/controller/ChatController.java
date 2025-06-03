@@ -1,5 +1,7 @@
 package com.practiceproject.linkchat_back.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,8 +12,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/chat")
 public class ChatController {
+    private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
+
     @GetMapping
     public Map<String, Object> getChatData() {
+        logger.debug("Fetching chat data");
         return Map.of(
                 "title", "This is our chat",
                 "users", List.of(
