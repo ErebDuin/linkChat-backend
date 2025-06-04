@@ -7,10 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@RequestMapping("/admin/login")
 public class AdminLoginPageController {
     private static final Logger logger = LoggerFactory.getLogger(AdminLoginPageController.class);
 
-    @GetMapping("/api/admin-login")
+    @GetMapping("/admin/admin-login")
     public String login() {
         logger.debug("Accessing admin login page");
         return "admin-login";
