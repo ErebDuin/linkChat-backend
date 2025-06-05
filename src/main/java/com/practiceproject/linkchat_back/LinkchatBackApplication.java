@@ -11,18 +11,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 public class LinkchatBackApplication {
 
-//	@Bean
-//	CommandLineRunner init(UserRepository repo) {
-//		return args -> {
-//			// Initialize the database with a default user
-//			if (repo.findByUsername("admin") == null) {
-//				User admin = new User();
-//				admin.setUsername("admin");
-//				admin.setPassword("test");
-//				repo.save(admin);
-//			}
-//		};
-//	}
+	@Bean
+	CommandLineRunner init(UserRepository repo) {
+		return args -> {
+			// Initialize the database with a default user
+			if (repo.findByUsername("admin") == null) {
+				User admin = new User();
+				admin.setUsername("admin");
+				admin.setPassword("test");
+				repo.save(admin);
+			}
+		};
+	}
 
 	public static void main(String[] args) {
 
