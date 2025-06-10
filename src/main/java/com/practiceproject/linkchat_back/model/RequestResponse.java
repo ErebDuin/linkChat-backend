@@ -1,9 +1,9 @@
 package com.practiceproject.linkchat_back.model;
 
-public class Message {
+public class RequestResponse {
     private String message;
 
-    public Message(String message) {
+    public RequestResponse(String message) {
         this.message = message;
     }
 
