@@ -31,12 +31,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/admin-login", "/js/**", "/styles/**").permitAll()
+                        .requestMatchers("/ui/admin-login", "/js/**", "/styles/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/api/admin-login")
-                        .defaultSuccessUrl("/dashboard", true)
+                        .loginPage("/ui/admin-login")
+                        .defaultSuccessUrl("/ui/dashboard", true)
                         .permitAll()
                 )
                 .logout(logout -> logout.permitAll());
