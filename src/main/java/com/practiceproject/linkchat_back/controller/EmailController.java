@@ -26,4 +26,5 @@ public class EmailController {
     public void sendEmailJson(@RequestBody EmailRequest request) {
         emailService.sendSimpleMessage(request.getTo(), request.getSubject(), request.getText());
     }
+    // ToEmailAddress, //Subject, //TemplateName, //List<String> TemplateVariables
 }
