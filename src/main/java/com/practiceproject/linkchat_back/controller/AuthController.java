@@ -30,7 +30,7 @@ public class AuthController {
         }
 
         boolean isAuthenticated =
-                Objects.equals("testuser", user.getUsername()) &&
+                Objects.equals("testuser@mail.com", user.getUsername()) &&
                         Objects.equals("password", user.getPassword());
 
         if (!isAuthenticated) {
