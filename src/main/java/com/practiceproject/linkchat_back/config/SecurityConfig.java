@@ -37,7 +37,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173")); // адрес фронта
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -56,7 +56,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/ui/admin-login", "/js/**", "/styles/**", "/api/**", "/v3/**").permitAll()
+                        .requestMatchers("/api/auth", "/ui/admin-login", "/js/**", "/styles/**", "/api/public/**", "/v3/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
