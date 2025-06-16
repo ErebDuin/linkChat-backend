@@ -3,6 +3,7 @@ package com.practiceproject.linkchat_back.controller;
 
 import com.practiceproject.linkchat_back.dtos.UserDto;
 import com.practiceproject.linkchat_back.model.RequestResponse;
+import jakarta.annotation.security.PermitAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/api/auth")
+    @PermitAll
     public ResponseEntity<RequestResponse> auth(@RequestBody final UserDto user) {
         logger.debug("Accessing auth endpoint");
 
