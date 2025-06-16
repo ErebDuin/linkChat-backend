@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth").permitAll()
+                        .requestMatchers("/api/auth", "/swagger").permitAll()
                         .requestMatchers("/ui/admin-login", "/js/**", "/styles/**", "/v3/**").permitAll()
                         .anyRequest().authenticated()
                 )
