@@ -46,6 +46,15 @@ form .txt_field{
   background: none;
   outline: none;
 }
+#password{
+  width: 90%;
+  padding: 0 5px;
+  height: 40px;
+  font-size: 16px;
+  border: none;
+  background: none;
+  outline: none;
+}
 .txt_field label{
   position: absolute;
   top: 50%;
@@ -74,6 +83,17 @@ form .txt_field{
 .txt_field input:focus ~ span::before,
 .txt_field input:valid ~ span::before{
   width: 100%;
+}
+.toggle-password{
+  padding: 10px;
+  position: absolute;
+  top: 50%;
+  right: 9%;
+  color: #a6a6a6;
+}
+.toggle-password:hover{
+  color: #4631A0;
+  cursor: pointer;
 }
 input[type="submit"]{
   width: 100%;
