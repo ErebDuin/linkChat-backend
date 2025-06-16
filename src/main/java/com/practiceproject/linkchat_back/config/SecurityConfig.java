@@ -5,21 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -52,12 +51,11 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                HttpMethod.OPTIONS, "/**",
-                                "/api/auth",
-                                "/ui/admin-login", "/js/**", "/styles/**", "/v3/**"
-                        ).permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/auth").permitAll()
+                        .requestMatchers("/ui/admin-login", "/js/**", "/styles/**", "/v3/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -66,11 +64,10 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout.permitAll())
-                .cors(withDefaults())
                 .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(
-                                new org.springframework.security.web.authentication.HttpStatusEntryPoint(org.springframework.http.HttpStatus.UNAUTHORIZED),
-                                new org.springframework.security.web.util.matcher.AntPathRequestMatcher("/api/auth")
+                                new HttpStatusEntryPoint(UNAUTHORIZED),
+                                new AntPathRequestMatcher("/api/**")
                         )
                 );
 
@@ -86,4 +83,3 @@ public class SecurityConfig {
         return auth;
     }
 }
-
