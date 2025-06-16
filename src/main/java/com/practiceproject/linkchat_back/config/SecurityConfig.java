@@ -55,8 +55,11 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/api/**")
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth", "/ui/admin-login", "/js/**", "/styles/**", "/api/public/**", "/v3/**").permitAll()
+                        .requestMatchers(
+                                HttpMethod.OPTIONS, "/**",
+                                "/api/auth",
+                                "/ui/admin-login", "/js/**", "/styles/**", "/v3/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
