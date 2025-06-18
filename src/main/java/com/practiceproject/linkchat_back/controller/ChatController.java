@@ -15,6 +15,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import com.practiceproject.linkchat_back.model.Chat;
+
+
 
 @RestController
 @RequestMapping("/api/chat")
@@ -42,5 +47,22 @@ public class ChatController {
         logger.debug("Fetching chat data for {}", link);
         return new ChatInfo(link, chatRepository, chatUserRepository, chatMessageRepository);
 
+    }
+    @PostMapping
+    public Chat createChat(@RequestBody Chat chat) {
+        // Generate a random 6-character string
+        String link = generateRandomLink(6);
+        chat.setLink(link);
+        return chatRepository.save(chat);
+    }
+
+    private String generateRandomLink(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder sb = new StringBuilder();
+        java.util.Random random = new java.util.Random();
+        for (int i = 0; i < length; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
     }
 }
