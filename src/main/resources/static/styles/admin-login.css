@@ -85,10 +85,9 @@ form .txt_field{
   width: 100%;
 }
 .toggle-password{
-  padding: 10px;
   position: absolute;
-  top: 50%;
-  right: 9%;
+  top: 55%;
+  right: 10%;
   color: #a6a6a6;
 }
 .toggle-password:hover{
