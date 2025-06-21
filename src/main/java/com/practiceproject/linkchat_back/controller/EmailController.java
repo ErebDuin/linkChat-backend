@@ -19,12 +19,30 @@ public class EmailController {
     public void sendEmailUrl(@RequestParam String to,
                           @RequestParam String subject,
                           @RequestParam String text) {
-        emailService.sendSimpleMessage(to, subject, text);
+        try {
+            emailService.sendSimpleMessage(to, subject, text);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @PostMapping("/api/sendEmailJson")
     public void sendEmailJson(@RequestBody EmailRequest request) {
-        emailService.sendSimpleMessage(request.getTo(), request.getSubject(), request.getText());
+        try {
+            emailService.sendSimpleMessage(request.getTo(), request.getSubject(), request.getText());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+    @PostMapping("/api/sendEmailTemplate")
+    public void sendEmailTemplate(@RequestBody EmailRequest request) {
+        try {
+            emailService.sendWithTemplate(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // ToEmailAddress, //Subject, //TemplateName, //List<String> TemplateVariables
 }

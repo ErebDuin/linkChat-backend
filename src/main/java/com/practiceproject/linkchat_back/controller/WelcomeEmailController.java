@@ -1,5 +1,8 @@
 package com.practiceproject.linkchat_back.controller;
 
+import com.practiceproject.linkchat_back.adminLoginPageController.AdminLoginPageController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +16,8 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 @Controller
-@RequestMapping("/email")
 public class WelcomeEmailController {
+    private static final Logger logger = LoggerFactory.getLogger(AdminLoginPageController.class);
 
     @Autowired
     private JavaMailSender mailSender;
@@ -22,7 +25,13 @@ public class WelcomeEmailController {
     @Autowired
     private SpringTemplateEngine templateEngine;
 
-    @PostMapping("/send-welcome")
+    @GetMapping("/ui/email")
+    public String email() {
+        logger.debug("Accessing welcome email page");
+        return "welcome-email";
+    }
+
+    @PostMapping("/ui/email")
     @ResponseBody
     public String sendWelcomeEmail(
             @RequestParam String to,
@@ -30,6 +39,7 @@ public class WelcomeEmailController {
             @RequestParam String platformName,
             @RequestParam String emailSignature
     ) {
+        logger.debug("Sending email");
         try {
             // Prepare the Thymeleaf context with variables
             Context context = new Context();
