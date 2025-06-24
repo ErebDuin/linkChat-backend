@@ -3,13 +3,19 @@ package com.practiceproject.linkchat_back.controller;
 import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class DashboardController {
+
+    private String message = "";
+    private String chatCreationResult = "";
 
     private final ChatRepository chatRepository;
 
@@ -18,8 +24,16 @@ public class DashboardController {
     }
 
     @GetMapping("/ui/dashboard")
-    public String dashboard() {
+    public String dashboard(Model model) {
+        model.addAttribute("message", message);
+        model.addAttribute("chatResult", chatCreationResult);
         return "dashboard";
+    }
+
+    @PostMapping("/ui/dashboard")
+    public String dashboard(@RequestParam String newMessage) {
+        this.message = newMessage;
+        return "redirect:/ui/dashboard";
     }
 
     @PostMapping("/ui/dashboard/create")
@@ -28,12 +42,17 @@ public class DashboardController {
             redirectAttributes.addFlashAttribute("error", "Chat title is required");
             return "redirect:/ui/dashboard";
         }
-        String link = generateRandomLink(6);
-        Chat chat = new Chat();
-        chat.setTitle(chatTitle);
-        chat.setLink(link);
-        chatRepository.save(chat);
-        return "redirect:/ui/dashboard/" + link;
+        try {
+            String link = generateRandomLink(6);
+            Chat chat = new Chat();
+            chat.setTitle(chatTitle);
+            chat.setLink(link);
+            chatRepository.save(chat);
+            this.chatCreationResult = "Chat created successfully with link: " + link;
+        } catch (Exception ex) {
+            this.chatCreationResult = "Error creating chat: " + ex.getMessage();
+        }
+        return "redirect:/ui/dashboard";
     }
 
     private String generateRandomLink(int length) {
@@ -46,4 +65,3 @@ public class DashboardController {
         return sb.toString();
     }
 }
-
