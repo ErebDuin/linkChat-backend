@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -19,6 +20,13 @@
             <button type="button" onclick="hideModal()">Cancel</button>
         </div>
         <div id="modalBackdrop" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:999;"></div>
+
+        <h1 th:text="${message}">Not Set</h1>
+
+        <form th:action="@{/ui/dashboard}" method="post">
+            <input type="text" name="newMessage" placeholder="Enter new message" />
+            <button type="submit">Set Message</button>
+        </form>
 
         <script>
             function showModal() {
