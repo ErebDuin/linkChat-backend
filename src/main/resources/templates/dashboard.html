@@ -28,32 +28,15 @@
             <button type="submit">Set Message</button>
         </form>
 
-        <script>
-            function showModal() {
-                document.getElementById('createChatModal').style.display = 'block';
-                document.getElementById('modalBackdrop').style.display = 'block';
-            }
-            function hideModal() {
-                document.getElementById('createChatModal').style.display = 'none';
-                document.getElementById('modalBackdrop').style.display = 'none';
-            }
-                function createChat() {
-                    const title = document.getElementById('chatTitle').value;
-                    fetch('/api/chat', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ title: title })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        hideModal();
-                        window.location.href = '/api/chat/' + data.link;
-                    })
-                    .catch(error => {
-                        hideModal();
-                        alert('Failed to create chat');
-                    });
-                }
-        </script>
+    <script>
+        function showModal() {
+            document.getElementById('createChatForm').style.display = 'block';
+            document.getElementById('modalBackdrop').style.display = 'block';
+        }
+        function hideModal() {
+            document.getElementById('createChatForm').style.display = 'none';
+            document.getElementById('modalBackdrop').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
