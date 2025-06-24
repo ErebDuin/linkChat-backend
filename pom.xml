@@ -104,6 +104,13 @@
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.7.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.30</version>   <!-- or the latest -->
+			<scope>provided</scope>      <!-- Lombok code is generated at compile-time -->
+		</dependency>
 	</dependencies>
 
 	<build>
