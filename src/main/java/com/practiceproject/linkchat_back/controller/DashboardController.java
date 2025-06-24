@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class DashboardController {
 
     private String message = "";
+    private String chatCreationResult = "";
 
     private final ChatRepository chatRepository;
 
@@ -25,6 +26,7 @@ public class DashboardController {
     @GetMapping("/ui/dashboard")
     public String dashboard(Model model) {
         model.addAttribute("message", message);
+        model.addAttribute("chatResult", chatCreationResult);
         return "dashboard";
     }
 
@@ -40,12 +42,17 @@ public class DashboardController {
             redirectAttributes.addFlashAttribute("error", "Chat title is required");
             return "redirect:/ui/dashboard";
         }
-        String link = generateRandomLink(6);
-        Chat chat = new Chat();
-        chat.setTitle(chatTitle);
-        chat.setLink(link);
-        chatRepository.save(chat);
-        return "redirect:/ui/dashboard/" + link;
+        try {
+            String link = generateRandomLink(6);
+            Chat chat = new Chat();
+            chat.setTitle(chatTitle);
+            chat.setLink(link);
+            chatRepository.save(chat);
+            this.chatCreationResult = "Chat created successfully with link: " + link;
+        } catch (Exception ex) {
+            this.chatCreationResult = "Error creating chat: " + ex.getMessage();
+        }
+        return "redirect:/ui/dashboard";
     }
 
     private String generateRandomLink(int length) {

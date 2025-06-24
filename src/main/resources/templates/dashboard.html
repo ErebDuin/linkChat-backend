@@ -11,15 +11,26 @@
 <input type="text" placeholder="Enter email here" />
 <button type="button">Send to email</button>
 <button type="button" onclick="showModal()">Create Chat</button>
-        <div id="createChatModal" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%,-30%); background:#fff; border:1px solid #ccc; padding:20px; z-index:1000;">
-            <h2>Create New Chat</h2>
-            <label for="chatTitle">Title:</label>
-            <input type="text" id="chatTitle" name="chatTitle" />
-            <br/><br/>
-            <button type="button" onclick="createChat()">Create</button>
-            <button type="button" onclick="hideModal()">Cancel</button>
-        </div>
-        <div id="modalBackdrop" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:999;"></div>
+    <form id="createChatForm" method="post" action="/ui/dashboard/create" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%,-30%); background:#fff; border:1px solid #ccc; padding:20px; z-index:1000;">
+        <h2>Create New Chat</h2>
+        <label for="chatTitle">Title:</label>
+        <input type="text" id="chatTitle" name="chatTitle" required />
+        <br/><br/>
+        <button type="submit">Create</button>
+        <button type="button" onclick="hideModal()">Cancel</button>
+    </form>
+<div id="modalBackdrop" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:999;"></div>
+<div style="color:red" th:text="${chatResult}"></div>
+<script>
+    function showModal() {
+        document.getElementById('createChatForm').style.display = 'block';
+        document.getElementById('modalBackdrop').style.display = 'block';
+    }
+    function hideModal() {
+        document.getElementById('createChatForm').style.display = 'none';
+        document.getElementById('modalBackdrop').style.display = 'none';
+    }
+</script>
 
         <h1 th:text="${message}">Not Set</h1>
 
@@ -28,15 +39,5 @@
             <button type="submit">Set Message</button>
         </form>
 
-    <script>
-        function showModal() {
-            document.getElementById('createChatForm').style.display = 'block';
-            document.getElementById('modalBackdrop').style.display = 'block';
-        }
-        function hideModal() {
-            document.getElementById('createChatForm').style.display = 'none';
-            document.getElementById('modalBackdrop').style.display = 'none';
-        }
-    </script>
 </body>
 </html>
