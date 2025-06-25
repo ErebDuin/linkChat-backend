@@ -45,4 +45,16 @@ public class EmailController {
     }
 
     // ToEmailAddress, //Subject, //TemplateName, //List<String> TemplateVariables
+
+    @PostMapping("/api/sendInvite")
+    public void sendInvite(@RequestParam String to,
+                           @RequestParam String username,
+                           @RequestParam String link,
+                           @RequestParam(defaultValue = "24") int ttlHours) {
+        try {
+            emailService.sendInvite(to, username, link, ttlHours);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
