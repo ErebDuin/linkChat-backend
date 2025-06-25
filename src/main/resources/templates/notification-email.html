@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Notification: [[${notificationTitle}]]</title>
+    <style>
+        body { background-color: #f4f4f7; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .container { background-color: #ffffff; max-width: 600px; margin: 40px auto; padding: 20px; border-radius: 6px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+        .header { background-color: #3f51b5; color: white; padding: 15px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; }
+        h1 { color: #333333; }
+        p { color: #555555; line-height: 1.6; }
+        .notification-box { background-color: #f0f7ff; border-left: 4px solid #3f51b5; padding: 15px; margin: 20px 0; }
+        .button { display: inline-block; background-color: #ff5722; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 4px; margin-top: 20px; font-weight: bold; }
+        .button:hover { background-color: #e64a19; }
+        .footer { font-size: 12px; color: #888888; margin-top: 30px; border-top: 1px solid #eeeeee; padding-top: 15px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>Important Notification</h2>
+    </div>
+    <h1>Hello, [[${username}]]!</h1>
+    <p>You have a new notification:</p>
+    <div class="notification-box">
+        <h3>[[${notificationTitle}]]</h3>
+        <p>[[${notificationMessage}]]</p>
+    </div>
+    <p>If you need to take action, please click the button below:</p>
+    <p><a href="[[${actionLink}]]" class="button">Take Action</a></p>
+    <p>If the button above doesn't work, copy and paste this link into your browser:</p>
+    <p>[[${actionLink}]]</p>
+    <div class="footer">
+        <p>Best regards,<br>[[${from}]]</p>
+        <p>This is an automated message. Please do not reply directly to this email.</p>
+    </div>
+</div>
+</body>
+
