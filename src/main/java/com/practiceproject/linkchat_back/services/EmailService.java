@@ -46,4 +46,26 @@ public class EmailService {
 
         emailSender.send(message);
     }
+
+    public void sendInvite(String to, String username, String link, int ttlHours) throws Exception {
+
+        ClassPathResource res = new ClassPathResource("templates/inviteToTheChat.html");
+        String html = Files.readString(res.getFile().toPath(), StandardCharsets.UTF_8);
+
+        html = html.replace("{{username}}", username)
+                .replace("{{sender}}",   "sysportnov@gmail.com")
+                .replace("{{link}}",     link)
+                .replace("{{ttlHours}}", String.valueOf(ttlHours))
+                .replace("{{inviteId}}", java.util.UUID.randomUUID().toString());
+
+        MimeMessage msg = emailSender.createMimeMessage();
+        MimeMessageHelper h = new MimeMessageHelper(msg, true, "UTF-8");
+        h.setFrom("sysportnov@gmail.com");
+        h.setTo(to);
+        h.setSubject("You’ve got a chat invite!");
+        h.setText(html, true);
+
+        emailSender.send(msg);
+    }
+
 }
