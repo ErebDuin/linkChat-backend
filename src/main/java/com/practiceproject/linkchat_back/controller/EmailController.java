@@ -57,4 +57,14 @@ public class EmailController {
             e.printStackTrace();
         }
     }
+    @PostMapping("/api/chatTitleUpdated")
+    public void chatTitleUpdated(@RequestParam String to,
+                                 @RequestParam String chatTitle,
+                                 @RequestParam String link) {
+        try {
+            emailService.sendChatTitleUpdatedEmail(to, chatTitle, link);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
