@@ -31,6 +31,7 @@ public class DashboardController {
         model.addAttribute("message", message);
         model.addAttribute("chatResult", chatCreationResult);
         model.addAttribute("settings", settings);
+        model.addAttribute("chats", chatRepository.findAll());
         return "dashboard";
     }
 
