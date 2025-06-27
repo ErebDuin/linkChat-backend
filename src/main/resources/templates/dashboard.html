@@ -4,6 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .form-section {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 <h1>This is a dashboard</h1>
@@ -21,6 +39,37 @@
     </form>
 <div id="modalBackdrop" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:999;"></div>
 <div style="color:red" th:text="${chatResult}"></div>
+
+<!-- Settings Form -->
+<div class="form-section">
+    <h3>Settings</h3>
+    <form th:action="@{/ui/dashboard/settings}" method="post">
+        <input type="text" name="settingName" placeholder="Setting Name" required />
+        <input type="text" name="settingValue" placeholder="Setting Value" required />
+        <button type="submit">Save Setting</button>
+    </form>
+</div>
+
+<!-- Settings Display -->
+<div class="form-section">
+    <h3>Current Settings</h3>
+    <table th:if="${!settings.empty}">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="setting : ${settings}">
+                <td th:text="${setting.settingName}"></td>
+                <td th:text="${setting.settingValue}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <p th:if="${settings.empty}">No settings added yet</p>
+</div>
+
 <script>
     function showModal() {
         document.getElementById('createChatForm').style.display = 'block';
@@ -32,12 +81,12 @@
     }
 </script>
 
-        <h1 th:text="${message}">Not Set</h1>
+<h1 th:text="${message}">Not Set</h1>
 
-        <form th:action="@{/ui/dashboard}" method="post">
-            <input type="text" name="newMessage" placeholder="Enter new message" />
-            <button type="submit">Set Message</button>
-        </form>
+<form th:action="@{/ui/dashboard}" method="post">
+    <input type="text" name="newMessage" placeholder="Enter new message" />
+    <button type="submit">Set Message</button>
+</form>
 
 </body>
 </html>

@@ -41,4 +41,9 @@ public class Settings implements Serializable {
         settingName  = settingName.trim();
         settingValue = settingValue.trim();
     }
+
+    public Settings(String settingName, String settingValue) {
+        this.settingName = settingName;
+        this.settingValue = settingValue;
+    }
 }
