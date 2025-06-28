@@ -67,5 +67,21 @@ public class EmailService {
 
         emailSender.send(msg);
     }
+    public void sendChatTitleUpdatedEmail(String to, String chatTitle, String link) throws Exception {
+        ClassPathResource res = new ClassPathResource("templates/chatTitleUpdated.html");
+        String html = Files.readString(res.getFile().toPath(), StandardCharsets.UTF_8);
+
+        html = html.replace("{{chatTitle}}", chatTitle)
+                .replace("{{link}}", link);
+
+        MimeMessage msg = emailSender.createMimeMessage();
+        MimeMessageHelper h = new MimeMessageHelper(msg, true, "UTF-8");
+        h.setFrom("sysportnov@gmail.com");
+        h.setTo(to);
+        h.setSubject("Chat Title Updated");
+        h.setText(html, true);
+
+        emailSender.send(msg);
+    }
 
 }

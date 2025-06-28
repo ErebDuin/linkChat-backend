@@ -69,7 +69,30 @@
     </table>
     <p th:if="${settings.empty}">No settings added yet</p>
 </div>
-
+<div class="form-section">
+    <h3>Available Chats</h3>
+    <table th:if="${!chats.empty}">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Link</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="chat : ${chats}">
+            <td th:text="${chat.title}"></td>
+            <td th:text="${chat.link}"></td>
+            <td>
+                <a th:href="@{'/chat/' + ${chat.link}}" target="_blank">
+                    <button type="button">Join</button>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p th:if="${chats.empty}">No chats created yet</p>
+</div>
 <script>
     function showModal() {
         document.getElementById('createChatForm').style.display = 'block';
