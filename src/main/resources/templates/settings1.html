@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="layout.html">
+
+<section layout:fragment="content">
+    <h1>Settings page</h1>
+
+    <form th:action="@{/ui/settings1/add}" th:object="${settingForm}" method="post">
+        <input type="text" th:field="*{settingName}" placeholder="Setting Name" required/>
+        <input type="text" th:field="*{settingValue}" placeholder="Setting Value" required/>
+        <button type="submit">Add Setting</button>
+    </form>
+
+    <table>
+        <tr th:each="setting: ${settings}">
+            <td th:text="${setting.id}">1</td>
+            <form th:action="@{/ui/settings1/update}" method="post">
+                <td>
+                    <input type="hidden" th:name="id" th:value="${setting.id}"/>
+                    <input type="text" th:name="settingName" th:value="${setting.settingName}" required/>
+                    <input type="text" th:name="settingValue" th:value="${setting.settingValue}" required/>
+                    <button type="submit">Update</button>
+                    <a th:href="@{/ui/settings1/delete/{id}(id=${setting.id})}">Delete</a>
+                </td>
+            </form>
+            <td>
+
+            </td>
+        </tr>
+    </table>
+</section>
+</html>
