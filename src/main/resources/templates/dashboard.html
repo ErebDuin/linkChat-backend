@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
@@ -30,14 +29,14 @@
 <input type="text" placeholder="Enter email here" />
 <button type="button">Send to email</button>
 <button type="button" onclick="showModal()">Create Chat</button>
-    <form id="createChatForm" method="post" action="/ui/dashboard/create" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%,-30%); background:#fff; border:1px solid #ccc; padding:20px; z-index:1000;">
-        <h2>Create New Chat</h2>
-        <label for="chatTitle">Title:</label>
-        <input type="text" id="chatTitle" name="chatTitle" required />
-        <br/><br/>
-        <button type="submit">Create</button>
-        <button type="button" onclick="hideModal()">Cancel</button>
-    </form>
+<form id="createChatForm" method="post" action="/ui/dashboard/create" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%,-30%); background:#fff; border:1px solid #ccc; padding:20px; z-index:1000;">
+    <h2>Create New Chat</h2>
+    <label for="chatTitle">Title:</label>
+    <input type="text" id="chatTitle" name="chatTitle" required />
+    <br/><br/>
+    <button type="submit">Create</button>
+    <button type="button" onclick="hideModal()">Cancel</button>
+</form>
 <div id="modalBackdrop" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:999;"></div>
 <div style="color:red" th:text="${chatResult}"></div>
 
@@ -56,16 +55,16 @@
     <h3>Current Settings</h3>
     <table th:if="${!settings.empty}">
         <thead>
-            <tr>
-                <th>Name</th>
-                <th>Value</th>
-            </tr>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
         </thead>
         <tbody>
-            <tr th:each="setting : ${settings}">
-                <td th:text="${setting.settingName}"></td>
-                <td th:text="${setting.settingValue}"></td>
-            </tr>
+        <tr th:each="setting : ${settings}">
+            <td th:text="${setting.settingName}"></td>
+            <td th:text="${setting.settingValue}"></td>
+        </tr>
         </tbody>
     </table>
     <p th:if="${settings.empty}">No settings added yet</p>
@@ -85,16 +84,32 @@
             <td th:text="${chat.title}"></td>
             <td th:text="${chat.link}"></td>
             <td>
-                <a th:href="@{'/chat/' + ${chat.link}}" target="_blank">
-                    <button type="button">Join</button>
-                </a>
+                <button type="button"
+                        th:attr="data-link=${chat.link},data-title=${chat.title}">
+                    Join
+                </button>
             </td>
         </tr>
         </tbody>
     </table>
     <p th:if="${chats.empty}">No chats created yet</p>
 </div>
+
+<!-- Chat Modal UI -->
+<div id="chatModal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%,-20%); background:#fff; border:1px solid #ccc; padding:20px; z-index:1000; width:400px; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+    <h2 id="chatModalTitle"></h2>
+    <div id="chatMessages" style="height:250px; overflow-y:auto; border:1px solid #eee; margin-bottom:10px; padding:10px; background:#fafafa;"></div>
+    <div style="display:flex; gap:5px;">
+        <input type="text" id="chatInput" placeholder="Type your message..." style="flex:1;" />
+        <button type="button" id="chatSendBtn">Send</button>
+        <button type="button" id="chatCloseBtn">Close</button>
+    </div>
+</div>
+
+<h1 th:text="${message}">Not Set</h1>
+
 <script>
+    // Modal show/hide for create chat
     function showModal() {
         document.getElementById('createChatForm').style.display = 'block';
         document.getElementById('modalBackdrop').style.display = 'block';
@@ -103,14 +118,71 @@
         document.getElementById('createChatForm').style.display = 'none';
         document.getElementById('modalBackdrop').style.display = 'none';
     }
+
+    // Chat logic
+    let currentChatLink = null;
+
+    function renderMessages(messages) {
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.innerHTML = '';
+        messages.forEach(msg => {
+            const div = document.createElement('div');
+            div.style.marginBottom = '8px';
+            div.innerHTML = `<b>${msg.sender}:</b> ${msg.messageText} <span style="color:#888;font-size:0.8em;">${msg.timestamp}</span>`;
+            chatMessages.appendChild(div);
+        });
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function loadMessages(link) {
+        fetch(`/api/chat/${link}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.messages) {
+                    renderMessages(data.messages);
+                }
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('button[data-link]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                currentChatLink = btn.getAttribute('data-link');
+                const title = btn.getAttribute('data-title');
+                document.getElementById('chatModal').style.display = 'block';
+                document.getElementById('chatModalTitle').textContent = title;
+                loadMessages(currentChatLink);
+            });
+        });
+
+        document.getElementById('chatCloseBtn').addEventListener('click', function() {
+            document.getElementById('chatModal').style.display = 'none';
+        });
+
+        document.getElementById('chatSendBtn').addEventListener('click', function() {
+            const messageText = document.getElementById('chatInput').value;
+            if (!messageText || !currentChatLink) return;
+
+            fetch(`/api/chat/${currentChatLink}/message`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messageText: messageText,
+                    sender: 'You',
+                    recipient: '',
+                    timestamp: new Date().toISOString()
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('chatInput').value = '';
+                    loadMessages(currentChatLink);
+                } else {
+                    alert('Failed to send message');
+                }
+            });
+        });
+    });
 </script>
-
-<h1 th:text="${message}">Not Set</h1>
-
-<form th:action="@{/ui/dashboard}" method="post">
-    <input type="text" name="newMessage" placeholder="Enter new message" />
-    <button type="submit">Set Message</button>
-</form>
-
 </body>
 </html>

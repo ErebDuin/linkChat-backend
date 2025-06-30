@@ -17,7 +17,6 @@ public class Chat {
     @Column(name = "link")
     private String link;
 
-
     public Chat() {}
 
     public Long getChatId() {
