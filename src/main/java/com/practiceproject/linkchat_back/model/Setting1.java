@@ -10,11 +10,14 @@ public class Setting1 {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "settingname", nullable = false)
+    @Column(name = "setting_name", nullable = false)
     private String settingName;
 
-    @Column(name = "settingvalue", nullable = false)
+    @Column(name = "setting_value", nullable = false)
     private String settingValue;
+
+    @Column(name = "setting_type", nullable = false)
+    private String settingType;
 
     // Getters and Setters
 
@@ -40,5 +43,13 @@ public class Setting1 {
 
     public void setSettingValue(String settingValue) {
         this.settingValue = settingValue;
+    }
+
+    public String getSettingType() {
+        return settingType;
+    }
+
+    public void setSettingType(String settingType) {
+        this.settingType = settingType;
     }
 }
