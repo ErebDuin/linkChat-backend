@@ -3,6 +3,7 @@ package com.practiceproject.linkchat_back.services;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.context.Context;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,9 @@ import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class WelcomeEmailService {
+    
+    private final JavaMailSender mailSender;
+    private final TemplateEngine templateEngine;
     
     private final NotificationEmailService notificationEmailService;
 
