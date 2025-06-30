@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Entity
 @Table(
         name = "settings",
-        uniqueConstraints = @UniqueConstraint(name = "uk_settings_name", columnNames = "setting_name")
+        uniqueConstraints = @UniqueConstraint(name = "uk_settings_name", columnNames = "settingName")
 )
 @Getter @Setter
 @NoArgsConstructor
@@ -28,12 +28,12 @@ public class Settings implements Serializable {
 
     @NotBlank
     @Size(max = 64)
-    @Column(name = "setting_name", nullable = false, length = 64)
+    @Column(name = "settingName", nullable = false, length = 64)
     private String settingName;
 
     @NotBlank
     @Size(max = 512)
-    @Column(name = "setting_value", nullable = false, length = 512)
+    @Column(name = "settingValue", nullable = false, length = 512)
     private String settingValue;
 
     @PrePersist @PreUpdate
