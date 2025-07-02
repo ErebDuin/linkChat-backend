@@ -4,4 +4,5 @@ import com.practiceproject.linkchat_back.model.Setting1;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface Setting1Repository extends JpaRepository<Setting1, Long> {
+    Setting1 findBySettingName(String settingName);
 }
