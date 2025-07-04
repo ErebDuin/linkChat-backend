@@ -2,7 +2,7 @@ package com.practiceproject.linkchat_back.controller;
 
 import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
-import com.practiceproject.linkchat_back.services.Settings;
+import com.practiceproject.linkchat_back.model.Setting1;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ public class DashboardController {
 
     private String message = "";
     private String chatCreationResult = "";
-    private List<Settings> settings = new ArrayList<>();
+    private List<Setting1> settings = new ArrayList<>();
 
     private final ChatRepository chatRepository;
 
@@ -64,7 +64,7 @@ public class DashboardController {
     public String saveSettings(@RequestParam("settingName") String name,
                               @RequestParam("settingValue") String value) {
 
-        Settings setting = new Settings(name, value);
+        Setting1 setting = new Setting1(name, value);
         settings.add(setting);
         return "redirect:/ui/dashboard";
     }

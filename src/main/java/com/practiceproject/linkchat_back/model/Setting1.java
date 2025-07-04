@@ -6,17 +6,25 @@ import jakarta.persistence.*;
 @Table(name = "settings")
 public class Setting1 {
 
+    public Setting1(String name, String value) {
+        this.settingName = name;
+        this.settingValue = value;
+    }
+
+    public Setting1() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "settingName", nullable = false)
+    @Column(name = "setting_name", nullable = false)
     private String settingName;
 
-    @Column(name = "settingType", nullable = false)
+    @Column(name = "setting_type", nullable = false)
     private String settingType;
 
-    @Column(name = "settingValue", nullable = false)
+    @Column(name = "setting_value", nullable = false)
     private String settingValue;
 
     // Getters and Setters
