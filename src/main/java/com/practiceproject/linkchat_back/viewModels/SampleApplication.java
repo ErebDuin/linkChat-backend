@@ -14,6 +14,26 @@ public class SampleApplication {
     @Min(value = 18, message = "Age must be at least 18")
     private Integer age;
 
+    private String message;
+
+    private boolean approved;
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public String getName() {
         return name;
     }
