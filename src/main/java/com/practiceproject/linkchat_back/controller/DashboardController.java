@@ -3,6 +3,7 @@ package com.practiceproject.linkchat_back.controller;
 import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.model.VitaliiSettings;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
+//import com.practiceproject.linkchat_back.model.Setting1;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ public class DashboardController {
     private String message = "";
     private String chatCreationResult = "";
     private List<VitaliiSettings> settings = new ArrayList<>();
-
+    //private List<Setting1> settings = new ArrayList<>();
     private final ChatRepository chatRepository;
 
     public DashboardController(ChatRepository chatRepository) {
@@ -66,6 +67,7 @@ public class DashboardController {
                                @RequestParam("settingType") String type) {
 
         VitaliiSettings setting = new VitaliiSettings(name, value, type);
+        //Setting1 setting = new Setting1(name, value);
         settings.add(setting);
         return "redirect:/ui/dashboard";
     }

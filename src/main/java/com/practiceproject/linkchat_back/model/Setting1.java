@@ -6,6 +6,14 @@ import jakarta.persistence.*;
 @Table(name = "settings")
 public class Setting1 {
 
+    public Setting1(String name, String value) {
+        this.settingName = name;
+        this.settingValue = value;
+    }
+
+    public Setting1() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

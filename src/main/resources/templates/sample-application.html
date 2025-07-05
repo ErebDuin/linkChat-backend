@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sample application</title>
+</head>
+<div th:insert="fragments/header :: header"></div>
+<body>
+
+<form th:action="@{/ui/sample-application}" th:object="${application}" method="post">
+    <h1>Sample Application</h1>
+    <label>Name:</label>
+    <input type="text" th:field="*{name}"/><br/>
+    <span th:errors="*{name}"></span><br/>
+
+    <label>Email:</label>
+    <input type="email" th:field="*{email}"/><br/>
+    <span th:errors="*{email}"></span><br/>
+
+    <label>Age:</label>
+    <input type="number" th:field="*{age}"/><br/>
+    <span th:errors="*{age}"></span><br/>
+
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>
