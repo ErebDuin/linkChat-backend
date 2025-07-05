@@ -23,5 +23,52 @@
 
     <button type="submit">Submit</button>
 </form>
+
+<p th:text="${message}" th:if="${message != null}"></p>
+
+<div th:if="${approved}">
+    <p>This application was approved</p>
+</div>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>
+            <a th:href="@{/ui/sample-application(sortBy='name', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, page=0, size=${#lists.size(applications)})}">
+                Name
+            </a>
+        </th>
+        <th>
+            <a th:href="@{/ui/sample-application(sortBy='age', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, page=0, size=${#lists.size(applications)})}">
+                Age
+            </a>
+        </th>
+        <th>Email</th>
+        <th>Approved</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="app : ${applications}">
+        <td th:text="${app.name}"></td>
+        <td th:text="${app.age}"></td>
+        <td th:text="${app.email}"></td>
+        <td th:text="${app.approved}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<div>
+    <span th:if="${currentPage > 0}">
+        <a th:href="@{/ui/sample-application(page=${currentPage - 1}, size=${#lists.size(applications)}, sortBy=${sortBy}, sortDir=${sortDir})}">Previous</a>
+    </span>
+    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+        <a th:href="@{/ui/sample-application(page=${i}, size=${#lists.size(applications)}, sortBy=${sortBy}, sortDir=${sortDir})}"
+           th:text="${i + 1}" th:classappend="${i == currentPage} ? 'active'"></a>
+    </span>
+    <span th:if="${currentPage < totalPages - 1}">
+        <a th:href="@{/ui/sample-application(page=${currentPage + 1}, size=${#lists.size(applications)}, sortBy=${sortBy}, sortDir=${sortDir})}">Next</a>
+    </span>
+</div>
+
 </body>
 </html>
