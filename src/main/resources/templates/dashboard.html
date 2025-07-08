@@ -24,9 +24,11 @@
 </head>
 <body>
 <h1>This is a dashboard</h1>
+<button id="logoutButton" style="float:right; margin-top:-40px; background:#e74c3c; color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer;">
+    Logout
+</button>
 <a href="/ui/settings1">Settings</a><br/>
 <a href="/ui/view-settings">Gegam-Settings</a><br/>
-<a href="/ui/chatMessages1">Messages-test</a><br/>
 <a href="/ui/chatMessages1">Messages-test</a><br/>
 <a href="/ui/vitalii-settings">Vitalii-Settings</a><br/>
 <button type="button">Generate link</button>
@@ -186,6 +188,25 @@
                 }
             });
         });
+    });
+</script>
+
+<!-- Logout -->
+
+<script>
+    document.getElementById("logoutButton").addEventListener("click", function() {
+        fetch("/logout", {
+            method: "POST",
+            credentials: "include"
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "/ui/admin-login";
+            } else {
+                alert("Logout failed!");
+            }
+        })
+        .catch(() => alert("Logout failed!"));
     });
 </script>
 </body>

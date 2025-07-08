@@ -65,7 +65,12 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/ui/dashboard", true)
                         .permitAll()
                 )
-                .logout(logout -> logout.permitAll())
+                .logout(logout -> logout
+                        .permitAll()
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .logoutSuccessUrl("/ui/admin-login")
+                )
                 .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(
                                 new HttpStatusEntryPoint(UNAUTHORIZED),
