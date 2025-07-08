@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.practiceproject.linkchat_back.model.Chat;
-
-
-
+import com.practiceproject.linkchat_back.model.ChatMessage;
 @RestController
 @RequestMapping("/api/chat")
 @Tag(name = "Chat API", description = "Operations related to chat data")
@@ -48,6 +46,13 @@ public class ChatController {
         return new ChatInfo(link, chatRepository, chatUserRepository, chatMessageRepository);
 
     }
+    @PostMapping("/{link}/message")
+    public void sendMessage(@PathVariable("link") String link, @RequestBody ChatMessage message) {
+        Chat chat = chatRepository.findByLink(link).orElse(null);
+        if (chat == null) throw new RuntimeException("Chat not found");
+        message.setChat(chat);
+        chatMessageRepository.save(message);
+    }
     @PostMapping
     public Chat createChat(@RequestBody Chat chat) {
         // Generate a random 6-character string
@@ -65,4 +70,5 @@ public class ChatController {
         }
         return sb.toString();
     }
+
 }
