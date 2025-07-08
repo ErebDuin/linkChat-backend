@@ -1,10 +1,12 @@
+<!-- src/main/resources/templates/template.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>You're Invited to Join a Chat</title>
 </head>
 <body>
-$END$
+<h1>Hello, {{username}}!</h1>
+<p>You have been invited to join a chat. Please <a href="{{link}}">click here</a> to access the conversation.</p>
+<p>Note: This invitation link will remain active for {{ttlHours}} hours.</p>
 </body>
 </html>
