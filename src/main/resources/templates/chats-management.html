@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/styles/chats-management.css}"/>
+    <title>Chats Management</title>
+</head>
+<body>
+    <div th:insert="fragments/header :: header"></div>
+    <div class="main-container">
+        <h1>Chats Management</h1>
+        <form th:action="@{/ui/chats-management}" method="post">
+            <a th:href="@{/ui/new-chat}" class="button-link">New Chat</a>
+        </form>
+    </div>
+    <div th:insert="fragments/footer :: footer"></div>
+</body>
+</html>
