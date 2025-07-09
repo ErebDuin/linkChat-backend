@@ -7,9 +7,9 @@
 <body>
 <main layout:fragment="content" class="main">
     <div class="dashboard-stats">
-        <p>Users: </p>
-        <p>Total Chats: </p>
-        <p>Total Messages: </p>
+        <p>Users: <span th:text="${totalUsers}">0</span></p>
+        <p>Total Chats: <span th:text="${totalChats}">0</span></p>
+        <p>Total Messages: <span th:text="${totalMessages}">0</span></p>
     </div>
 </main>
 </body>
