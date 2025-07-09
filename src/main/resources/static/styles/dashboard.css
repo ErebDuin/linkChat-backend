@@ -58,3 +58,16 @@ body {
 .dashboard-stats p {
     margin: 10px 0;
 }
+
+.logout-link-btn {
+    background: #3A55B7;
+    color: #fff;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+    font: inherit;
+    font-weight: 700;
+    font-size: 16px;
+}
