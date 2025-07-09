@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Edit User</title>
+    <link rel="stylesheet" th:href="@{/styles/edit-user.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="main">
+    <h2>Edit User</h2>
+
+    <form th:action="@{/ui/edit-user}" th:object="${userEditDto}" method="post">
+
+        <label for="name">Name</label>
+        <input id="name" type="text" th:field="*{name}" required />
+
+        <label for="email">Email</label>
+        <input id="email" type="email" th:field="*{email}" required />
+
+        <label for="role">Role</label>
+        <select id="role" th:field="*{role}">
+            <option value="" hidden>— choose —</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="USER">USER</option>
+        </select>
+
+        <label for="active">Active</label>
+        <input id="active" type="checkbox" th:field="*{active}" />
+
+        <div class="btn-row">
+            <button type="submit" class="btn-green">Save</button>
+            <button type="submit" class="btn-red" formaction="/ui/delete-user" formmethod="post">Delete</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>
