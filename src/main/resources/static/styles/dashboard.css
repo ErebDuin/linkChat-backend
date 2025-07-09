@@ -66,8 +66,8 @@ body {
     text-decoration: none;
     cursor: pointer;
     padding: 0;
+    outline: none;
     font: inherit;
     font-weight: 700;
     font-size: 16px;
-    outline: none;
 }
