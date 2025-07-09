@@ -1,4 +1,4 @@
-package com.practiceproject.linkchat_back.adminLoginPageController;
+package com.practiceproject.linkchat_back.viewController;
 
 
 import org.slf4j.Logger;
