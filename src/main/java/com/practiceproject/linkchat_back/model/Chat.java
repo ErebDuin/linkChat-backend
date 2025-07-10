@@ -14,6 +14,8 @@ public class Chat {
 
     private String users; // optional string column as per DB schema
 
+    private boolean active = true; // Default to active
+
     @Column(name = "link")
     private String link;
 
@@ -49,5 +51,13 @@ public class Chat {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

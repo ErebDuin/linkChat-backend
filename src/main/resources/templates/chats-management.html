@@ -7,14 +7,28 @@
     <title>Chats Management</title>
 </head>
 <body>
-    <main layout:fragment="content" class="main">
+<main layout:fragment="content" class="main">
     <div class="main-container">
         <h1>Chats Management</h1>
         <form th:action="@{/ui/chats-management}" method="post">
             <button type="button" name="cancel" class="action-button primary"
                     th:onclick="'window.location.href=\'' + @{/ui/new-chat} + '\''">New Chat</button>
         </form>
+
+        <div class="chats-list">
+            <div class="chat-item" th:each="chat : ${chats}">
+                <div class="chat-info">
+                    <div class="chat-name" th:text="${chat.title}">Chat Title</div>
+                    <div class="chat-link" th:text="${'/' + chat.link}">Link</div>
+                </div>
+                <div class="chat-actions">
+                    <span class="status-badge" th:classappend="${chat.active} ? 'active' : 'inactive'"
+                          th:text="${chat.active} ? 'Active' : 'Inactive'">Status</span>
+                    <a class="settings-button" th:href="@{'/ui/chat-settings/' + ${chat.chatId}}">Settings</a>
+                </div>
+            </div>
+        </div>
     </div>
-    </main>
+</main>
 </body>
 </html>
