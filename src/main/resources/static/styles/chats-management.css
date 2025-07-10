@@ -1,26 +1,109 @@
-*{
-    font-family: Roboto, sans-serif;
+/* Main container and body styling */
+body {
+    background-color: #f5f5f5;
 }
+
 .main-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative; /* Add this to position the button relative to this container */
+}
+
+/* Header with title and button styling */
+.main-container h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+/* New Chat button positioning and styling */
+.action-button.primary {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #E4FFE7;
+    color: #3A55B7;
+    border: 1px solid #31A03D;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.action-button.primary:hover {
+    background-color: #f5f5f5;
+}
+
+/* Chat list styling */
+.chats-list {
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chat-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e0e0;
 }
-.main-container h1 {
-    padding-left: 20px;
-    font-weight: 700;
-    font-size: 24px;
-    font-style: bold;
+
+.chat-item:last-child {
+    border-bottom: none;
 }
-.action-button.primary {
-    width: 76px;
-    height: 30px;
-    border: 1px solid #31A03D;
+
+.chat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.chat-link {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.chat-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-badge {
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    font-weight: normal;
+}
+
+.status-badge.active {
+    background-color: #77c997;
+    color: white;
+}
+
+.status-badge.inactive {
+    background-color: #ff9f9f;
+    color: white;
+}
+
+.settings-button {
+    background-color: white;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 5px 15px;
     border-radius: 5px;
-    background-color: #E4FFE7;
-    font-size: 12px;
-    font-weight: 700;
-    color: #3A55B7;
-    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.settings-button:hover {
+    background-color: #f5f5f5;
 }
