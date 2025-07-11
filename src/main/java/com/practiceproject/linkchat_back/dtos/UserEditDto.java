@@ -1,12 +1,16 @@
 package com.practiceproject.linkchat_back.dtos;
 
 public class UserEditDto {
+    private long id;
     private String name;
     private String email;
     private String role;
     private boolean active;
 
     public UserEditDto() {}
+
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
