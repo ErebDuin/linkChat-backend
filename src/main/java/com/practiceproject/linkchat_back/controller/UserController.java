@@ -1,8 +1,8 @@
 package com.practiceproject.linkchat_back.controller;
 
 import com.practiceproject.linkchat_back.dtos.UserEditDto;
-import com.practiceproject.linkchat_back.model.User1;
-import com.practiceproject.linkchat_back.repository.User1Repository;
+import com.practiceproject.linkchat_back.model.User;
+import com.practiceproject.linkchat_back.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class UserController {
 
     @Autowired
-    private User1Repository user1Repository;
+    private UserRepository userRepository;
 
     @GetMapping("/ui/edit-user")
     public String showEditUserForm(Model model) {
@@ -24,13 +24,18 @@ public class UserController {
 
     @PostMapping("/ui/edit-user")
     public String editUser(@ModelAttribute("userEditDto") UserEditDto userEditDto) {
-        User1 user = user1Repository.findByEmail(userEditDto.getEmail());
-        if (user != null) {
+        userRepository.findById(userEditDto.getId()).ifPresent(user -> {
             user.setName(userEditDto.getName());
             user.setRole(userEditDto.getRole());
             user.setActive(userEditDto.isActive());
-            user1Repository.save(user);
-        }
+            userRepository.save(user);
+        });
         return "redirect:/ui/dashboard";
+    }
+
+    @GetMapping("/ui/user")
+    public String showUsers(Model model) {
+        model.addAttribute("users", userRepository.findAll());
+        return "UsersManagement";
     }
 }
