@@ -22,7 +22,8 @@
         </div>
         <div class="field-box">
           <label>Type</label>
-          <select name="chat-type" required>
+          <select name="chat-type">
+            <option value="" disabled selected hidden>Select type</option>
             <option value="public">Public</option>
             <option value="private">Private</option>
           </select>
@@ -40,14 +41,10 @@
           </div>
         </div>
         <div class="field-box">
-          <div class="primary-button-row">
             <button type="button" name="save" class="action-button primary">Save</button>
             <button type="button" name="save-n-send" class="action-button primary">Save&Send</button>
-            <div></div> <!-- This is a blank space -->
-            <div></div> <!-- This is a blank space -->
             <button type="button" name="cancel" class="action-button danger"
                     th:onclick="'window.location.href=\'' + @{/ui/chats-management} + '\''">Cancel</button>
-          </div>
         </div>
       </form>
     </div>
