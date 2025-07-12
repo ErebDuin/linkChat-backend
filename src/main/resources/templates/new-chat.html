@@ -10,38 +10,38 @@
     <main layout:fragment="content" class="main">
     <div class="main-container">
       <h1>New Chat</h1>
-      <form th:action="@{/ui/new-chat}" method="post">
+      <form th:action="@{/ui/new-chat}" th:object="${chat}" method="post">
         <div class="field-box">
           <label>Name</label>
-          <input type="text" name="chat-name">
+          <input type="text" name="chat-name" th:field="*{title}">
         </div>
         <div class="field-box">
           <label>Link</label>
-          <input type="text" name="chat-link">
-          <button type="button" name="generate-button" class="action-button primary">Generate</button>
+          <input type="text" name="chat-link" th:field="*{link}" readonly>
+          <button type="submit" name="generate" class="action-button primary">Generate</button>
         </div>
         <div class="field-box">
           <label>Type</label>
-          <select name="chat-type">
-            <option value="" disabled selected hidden>Select type</option>
+          <select name="chat-type" th:field="*{type}" required>
+            <option value="" disabled hidden>Select type</option>
             <option value="public">Public</option>
             <option value="private">Private</option>
           </select>
         </div>
         <div class="field-box">
           <label>Active</label>
-          <input type="checkbox" name="chat-active">
+          <input type="checkbox" name="chat-active" th:field="*{active}">
         </div>
-        <div class="field-box">
+        <div th:each="email, iterStat : *{inviteEmails}" class="field-box">
           <label>Invite (Email)</label>
-          <input type="email" name="invite-email">
+          <input type="email" name="invite-email" th:field="*{inviteEmails[__${iterStat.index}__]}" />
           <div class="secondary-button-row">
-            <button type="button" name="add-invite" class="plus-minus-button primary">+</button>
-            <button type="button" name="remove-invite" class="plus-minus-button danger">-</button>
+            <button type="submit" name="addInvite" class="plus-minus-button primary">+</button>
+            <button type="submit" name="removeInvite" class="plus-minus-button danger">-</button>
           </div>
         </div>
         <div class="field-box">
-            <button type="button" name="save" class="action-button primary">Save</button>
+            <button type="submit" name="save" class="action-button primary">Save</button>
             <button type="button" name="save-n-send" class="action-button primary">Save&Send</button>
             <button type="button" name="cancel" class="action-button danger"
                     th:onclick="'window.location.href=\'' + @{/ui/chats-management} + '\''">Cancel</button>
