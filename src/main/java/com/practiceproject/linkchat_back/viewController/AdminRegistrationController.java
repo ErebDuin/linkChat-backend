@@ -1,4 +1,4 @@
-package com.practiceproject.linkchat_back.adminLoginPageController;
+package com.practiceproject.linkchat_back.viewController;
 
 import com.practiceproject.linkchat_back.model.User; // Import the User class
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Users Management - LinkChat</title>
+    <link rel="stylesheet" th:href="@{/styles/users-management.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/add-user.css}"/>
+</head>
+<body>
+<main layout:fragment="content" class="main-content">
+    <div class="users-management-wrapper">
+        <div class="header-row">
+            <h2>Users Management</h2>
+            <button class="new-user-btn">New User</button>
+        </div>
+        <table class="user-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.name}">Name</td>
+                <td>
+                    <span th:text="${#strings.substringBefore(user.email, '@')}">username</span><br>
+                    <span class="email" th:text="'@' + ${#strings.substringAfter(user.email, '@')}">@example.com</span>
+                </td>
+                <td th:text="${user.role}">Role</td>
+                <td>
+                    <span class="status"
+                          th:classappend="${user.active} ? ' active' : ' inactive'"
+                          th:text="${user.active} ? 'Active' : 'Inactive'">Status</span>
+                </td>
+                <td>
+                    <a th:href="@{'/ui/edit-user'(id=${user.id})}" class="edit-link">Edit</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ─── Add-User modal (hidden until button click) ─── -->
+    <dialog id="addUserDialog" class="user-dialog">
+        <h3>Add new user</h3>
+
+        <form id="addUserForm"
+              th:action="@{/ui/add-user}"
+              th:object="${userEditDto}"
+              method="post">
+
+            <label>Name</label>
+            <input type="text" th:field="*{name}" required/>
+
+            <label>Email</label>
+            <input type="email" th:field="*{email}" required/>
+
+            <label>Role</label>
+            <select th:field="*{role}">
+                <option value="" hidden></option>
+                <option value="ADMIN">Admin</option>
+                <option value="USER">User</option>
+                <option value="TEST">Test</option>
+            </select>
+
+            <label>Active</label>
+            <input type="checkbox" th:field="*{active}"/>
+
+            <menu class="modal-actions">
+                <button type="button" class="btn-green" id="cancelAdd">Cancel</button>
+                <button type="submit" class="btn-blue">Save</button>
+            </menu>
+        </form>
+    </dialog>
+
+    <script type="module" src="/js/addUser.js"></script>
+
+    <!--    Moved to users-management.css-->
+
+<!--    <style>-->
+<!--        .main-content {-->
+<!--            background: #fff;-->
+<!--            min-height: 100vh;-->
+<!--            padding: 32px 0;-->
+<!--        }-->
+<!--        .users-management-wrapper {-->
+<!--            margin-left: 40px;-->
+<!--            max-width: 800px;-->
+<!--            background: #fff;-->
+<!--        }-->
+<!--        .header-row {-->
+<!--            display: flex;-->
+<!--            justify-content: space-between;-->
+<!--            align-items: center;-->
+<!--            margin-bottom: 18px;-->
+<!--        }-->
+<!--        .new-user-btn {-->
+<!--            background: #2563eb;-->
+<!--            color: #fff;-->
+<!--            border: none;-->
+<!--            border-radius: 6px;-->
+<!--            padding: 8px 20px;-->
+<!--            font-size: 15px;-->
+<!--            font-weight: 500;-->
+<!--            cursor: pointer;-->
+<!--            transition: background 0.2s;-->
+<!--        }-->
+<!--        .new-user-btn:hover {-->
+<!--            background: #1d4ed8;-->
+<!--        }-->
+<!--        h2 {-->
+<!--            margin: 0;-->
+<!--        }-->
+<!--        .user-table {-->
+<!--            width: 95%;-->
+<!--            border-collapse: collapse;-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            font-size: 14px;-->
+<!--            background: #fff;-->
+<!--            border-radius: 8px;-->
+<!--            overflow: hidden;-->
+<!--            box-shadow: 0 2px 8px rgba(0,0,0,0.04);-->
+<!--        }-->
+<!--        .user-table thead {-->
+<!--            background: #f9fafb;-->
+<!--            border-bottom: 2px solid #e5e7eb;-->
+<!--        }-->
+<!--        .user-table th, .user-table td {-->
+<!--            padding: 14px 18px;-->
+<!--            vertical-align: middle;-->
+<!--            text-align: left;-->
+<!--        }-->
+<!--        .user-table th {-->
+<!--            font-weight: 600;-->
+<!--            color: #374151;-->
+<!--            letter-spacing: 0.02em;-->
+<!--        }-->
+<!--        .user-table tr:not(:last-child) {-->
+<!--            border-bottom: 1px solid #f1f5f9;-->
+<!--        }-->
+<!--        .email {-->
+<!--            color: #888;-->
+<!--            font-size: 13px;-->
+<!--        }-->
+<!--        .status {-->
+<!--            padding: 4px 14px;-->
+<!--            border-radius: 9999px;-->
+<!--            font-weight: 500;-->
+<!--            font-size: 13px;-->
+<!--            display: inline-block;-->
+<!--            min-width: 64px;-->
+<!--            text-align: center;-->
+<!--        }-->
+<!--        .status.active {-->
+<!--            background-color: #34d399;-->
+<!--            color: #fff;-->
+<!--        }-->
+<!--        .status.inactive {-->
+<!--            background-color: #d1d5db;-->
+<!--            color: #fff;-->
+<!--        }-->
+<!--        .edit-link {-->
+<!--            color: #2563eb;-->
+<!--            text-decoration: none;-->
+<!--            font-weight: 500;-->
+<!--            transition: color 0.2s;-->
+<!--        }-->
+<!--        .edit-link:hover {-->
+<!--            text-decoration: underline;-->
+<!--            color: #1d4ed8;-->
+<!--        }-->
+<!--        @media (max-width: 700px) {-->
+<!--            .users-management-wrapper {-->
+<!--                margin-left: 0;-->
+<!--                padding: 0 4px;-->
+<!--                max-width: 100%;-->
+<!--            }-->
+<!--            .user-table th, .user-table td {-->
+<!--                padding: 10px 8px;-->
+<!--                font-size: 13px;-->
+<!--            }-->
+<!--            .user-table {-->
+<!--                font-size: 13px;-->
+<!--                width: 100%;-->
+<!--            }-->
+<!--            .header-row {-->
+<!--                flex-direction: column;-->
+<!--                align-items: flex-start;-->
+<!--                gap: 12px;-->
+<!--            }-->
+<!--        }-->
+<!--    </style>-->
+</main>
+</body>
+</html>

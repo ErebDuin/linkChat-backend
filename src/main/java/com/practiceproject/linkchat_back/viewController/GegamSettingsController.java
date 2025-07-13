@@ -1,7 +1,6 @@
-package com.practiceproject.linkchat_back.adminLoginPageController;
+package com.practiceproject.linkchat_back.viewController;
 
 import com.practiceproject.linkchat_back.model.Setting1;
-import com.practiceproject.linkchat_back.repository.Setting1Repository;
 import com.practiceproject.linkchat_back.services.GegamSettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

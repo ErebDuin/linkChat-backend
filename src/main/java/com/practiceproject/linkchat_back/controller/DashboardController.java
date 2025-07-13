@@ -3,6 +3,8 @@ package com.practiceproject.linkchat_back.controller;
 import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.model.VitaliiSettings;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
+import com.practiceproject.linkchat_back.repository.UserRepository;
+import com.practiceproject.linkchat_back.repository.ChatMessageRepository;
 //import com.practiceproject.linkchat_back.model.Setting1;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,17 +24,34 @@ public class DashboardController {
     private List<VitaliiSettings> settings = new ArrayList<>();
     //private List<Setting1> settings = new ArrayList<>();
     private final ChatRepository chatRepository;
+    private final UserRepository userRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
-    public DashboardController(ChatRepository chatRepository) {
+    public DashboardController(ChatRepository chatRepository, UserRepository userRepository, ChatMessageRepository chatMessageRepository) {
         this.chatRepository = chatRepository;
+        this.userRepository = userRepository;
+        this.chatMessageRepository = chatMessageRepository;
     }
 
     @GetMapping("/ui/dashboard")
     public String dashboard(Model model) {
+        // Count total users
+        long totalUsers = userRepository.count();
+
+        // Get all chats and count them
+        List<Chat> allChats = chatRepository.findAll();
+        long totalChats = allChats.size();
+
+        // Count total messages
+        long totalMessages = chatMessageRepository.count();
+
         model.addAttribute("message", message);
         model.addAttribute("chatResult", chatCreationResult);
         model.addAttribute("settings", settings);
-        model.addAttribute("chats", chatRepository.findAll());
+        model.addAttribute("chats", allChats);
+        model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("totalChats", totalChats);
+        model.addAttribute("totalMessages", totalMessages);
         return "dashboard";
     }
 
@@ -81,4 +100,6 @@ public class DashboardController {
         }
         return sb.toString();
     }
+
+
 }

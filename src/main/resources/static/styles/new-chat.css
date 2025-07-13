@@ -1,0 +1,162 @@
+*{
+    font-family: Roboto, sans-serif;
+}
+.main-container {
+    display: flex;
+    flex-direction: column;
+    width: 35%;
+}
+.main-container h1 {
+    padding-left: 20px;
+    font-weight: 700;
+    font-size: 24px;
+}
+.field-box {
+    display: grid;
+    grid-template-columns: 95px 232px auto;
+    align-items: center;
+    height: 35px;
+    gap: 10px;
+    padding: 5px 20px;
+}
+.field-box label{
+    display: flex;
+    width: 100%;
+    font-weight: 700;
+    font-size: 12px;
+}
+.field-box input,
+.field-box select {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    height: 30px;
+    border: 1px solid #AAAAAA;
+    padding: 0 6px;
+    font-size: 14px;
+}
+.field-box select{
+    border-radius: 0;
+    outline: none;
+    color: #000;
+    background:
+        url("data:image/svg+xml;utf8,<svg fill='4631A0' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")
+        no-repeat right 10px center/20px 20px;
+    appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+}
+.field-box input[type="checkbox"] {
+    appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    height: 30px;
+    width: 30px;
+    border: 1px solid #AAAAAA;
+    cursor: pointer;
+}
+.field-box input[type="checkbox"]:checked {
+  background: #AAAAAA;
+}
+.field-box input[type="checkbox"]:checked::after {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin-top: 6px;
+  background: #3A55B7;
+  border-radius: 2px;
+}
+.action-button.primary {
+    width: 76px;
+    height: 30px;
+    border: 1px solid #31A03D;
+    border-radius: 5px;
+    background-color: #E4FFE7;
+    text-align: center;
+    font-size: 12px;
+    color: #3A55B7;
+    cursor: pointer;
+}
+.action-button.primary:active {
+    background-color: #31A03D;
+    transform: scale(0.98);
+    color: #FFFFFF;
+}
+.action-button.danger {
+    width: 76px;
+    height: 30px;
+    border: 1px solid #A03131;
+    border-radius: 5px;
+    background-color: #FFDBBC;
+    font-size: 12px;
+    color: #B73A3A;
+    cursor: pointer;
+}
+.action-button.danger:active {;
+    background-color: #A03131;
+    transform: scale(0.98);
+    color: #FFFFFF;
+}
+.secondary-button-row {
+    display: flex;
+    width: 60%;
+    align-items: center;
+    gap: 3px;
+    margin-left: 10px;
+}
+.secondary-button-row > * {
+    flex: 1;
+}
+.plus-minus-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+.plus-minus-button.primary{
+    color: #3A55B7;
+    border: 1px solid #31A03D;
+    background-color: #E4FFE7;
+}
+.plus-minus-button.primary:active{
+    background-color: #31A03D;
+    transform: scale(0.98);
+    color: #FFFFFF;
+}
+.plus-minus-button.danger{
+    color: #B73A3A;
+    border: 1px solid #A03131;
+    background-color: #FFDBBC;
+}
+.plus-minus-button.danger:active{
+    background-color: #A03131;
+    transform: scale(0.98);
+    color: #FFFFFF;
+}
+[name="generate-button"] {
+    margin-left: 15px;
+}
+[name="cancel"] {
+    margin-left: 15px;
+}
+
+@media (max-width: 600px) {
+  .center, .modal-content {
+    width: 95%;
+    min-width: unset;
+    margin: 10% auto;
+    padding: 10px;
+  }
+  .center form, .modal form {
+    padding: 0 10px;
+  }
+  .modal-content {
+    width: 95%;
+  }
+}

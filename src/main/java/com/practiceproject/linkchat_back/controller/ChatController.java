@@ -1,4 +1,5 @@
 package com.practiceproject.linkchat_back.controller;
+import com.practiceproject.linkchat_back.dtos.MessageDto;
 import com.practiceproject.linkchat_back.model.ChatInfo;
 import com.practiceproject.linkchat_back.repository.ChatMessageRepository;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
@@ -46,13 +47,13 @@ public class ChatController {
         return new ChatInfo(link, chatRepository, chatUserRepository, chatMessageRepository);
 
     }
-    @PostMapping("/{link}/message")
-    public void sendMessage(@PathVariable("link") String link, @RequestBody ChatMessage message) {
-        Chat chat = chatRepository.findByLink(link).orElse(null);
-        if (chat == null) throw new RuntimeException("Chat not found");
-        message.setChat(chat);
-        chatMessageRepository.save(message);
-    }
+//    @PostMapping("/{link}/message")
+//    public void sendMessage(@PathVariable("link") String link, @RequestBody ChatMessage message) {
+//        Chat chat = chatRepository.findByLink(link).orElse(null);
+//        if (chat == null) throw new RuntimeException("Chat not found");
+//        message.setChat(chat);
+//        chatMessageRepository.save(message);
+//    }
     @PostMapping
     public Chat createChat(@RequestBody Chat chat) {
         // Generate a random 6-character string
@@ -69,6 +70,18 @@ public class ChatController {
             sb.append(chars.charAt(random.nextInt(chars.length())));
         }
         return sb.toString();
+    }
+
+    @PostMapping("/{link}/message")
+    public void sendMessage(@PathVariable("link") String link, @RequestBody MessageDto dto) {
+        Chat chat = chatRepository.findByLink(link).orElseThrow(() -> new RuntimeException("Chat not found"));
+        ChatMessage message = new ChatMessage();
+        message.setMessageText(dto.messageText);
+        message.setSender(dto.sender);
+        message.setRecipient(dto.recipient);
+        message.setTimestamp(dto.timestamp);
+        message.setChat(chat);
+        chatMessageRepository.save(message);
     }
 
 }
