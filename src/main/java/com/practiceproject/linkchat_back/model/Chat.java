@@ -27,7 +27,10 @@ public class Chat {
     @Column(name = "link", nullable = false, unique = true)
     private String link;
 
-    @Column(name = "invite_emails")
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "chat_invite_email",
+            joinColumns = @JoinColumn(name = "chat_id"))
+    @Column(name = "email", nullable = false)
     private List<String> inviteEmails = new ArrayList<>();
 
     public Chat() {}
