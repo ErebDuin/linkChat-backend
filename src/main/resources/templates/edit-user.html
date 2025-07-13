@@ -58,6 +58,12 @@
         showSuccessAndRedirect(/*[[${successMessage}]]*/, /*[[${redirectAfter}]]*/);
     </script>
 
+    <span th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></span>
+    <script type="module" th:if="${errorMessage}" th:inline="javascript">
+        import { showSuccessAndRedirect } from /*[[@{/js/editUser.js}]]*/;
+        showSuccessAndRedirect(/*[[${errorMessage}]]*/, /*[[${redirectAfter}]]*/);
+    </script>
+
     <script type="module" src="/js/editUser.js"></script>
 </main>
 </body>
