@@ -108,6 +108,32 @@ form input[type="checkbox"] {
     animation: toastFadeIn .25s ease-out forwards;
 }
 
+.toast-error {
+    position: fixed;
+    top: 40px;
+    right: 20px;
+    z-index: 1050;
+
+    background: #f8d7da;
+    color: #842029;
+    border: 1px solid #f5c2c7;
+    border-radius: 6px;
+    padding: 12px 20px;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .15);
+
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: toastFadeIn .25s ease-out forwards;
+}
+
+.error-message{
+    display:block;
+    margin-top:12px;
+    color:#f44336;
+    font-weight:600;
+}
+
 @keyframes toastFadeIn {
     to {
         opacity: 1;

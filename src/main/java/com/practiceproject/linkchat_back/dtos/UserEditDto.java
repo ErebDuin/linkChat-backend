@@ -1,16 +1,20 @@
 package com.practiceproject.linkchat_back.dtos;
 
+import jakarta.validation.constraints.*;
+
+
 public class UserEditDto {
-    private long id;
-    private String name;
-    private String email;
-    private String role;
+
+    @NotNull private Long id;
+    @NotBlank @Size(min = 2, max = 50) private String name;
+    @Email @NotBlank private String email;
+    @NotBlank private String role;
     private boolean active;
 
     public UserEditDto() {}
 
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
