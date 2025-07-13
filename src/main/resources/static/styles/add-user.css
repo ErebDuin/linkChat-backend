@@ -1,0 +1,73 @@
+/* ───────────────────────── dialog shell ───────────────────────── */
+.user-dialog{
+    border:none;
+    border-radius:8px;
+    padding:28px 36px;
+    max-width:420px;
+    box-shadow:0 6px 20px rgba(0,0,0,.25);
+    background:#fff;
+    color:#333;
+    font-family:"Segoe UI",Arial,sans-serif;
+}
+.user-dialog::backdrop{background:rgba(0,0,0,.45);}
+
+/* ───────────────────────── form grid ─────────────────────────── */
+.user-dialog form{
+    display:grid;
+    grid-template-columns:110px 1fr;
+    gap:18px 24px;
+    align-items:center;
+}
+.user-dialog label{font-weight:600;}
+
+.user-dialog input[type="text"],
+.user-dialog input[type="email"],
+.user-dialog select{
+    width:100%;
+    padding:6px 8px;
+    border:1px solid #ccc;
+    border-radius:4px;
+    font-size:.9rem;
+    box-sizing:border-box;
+}
+
+/* checkbox */
+.user-dialog input[type="checkbox"]{width:20px;height:20px;}
+
+/* ───────────────────────── footer row ────────────────────────── */
+.user-dialog .modal-actions{
+    grid-column:1 / -1;
+    display:flex;
+    justify-content:space-between; /* Cancel left, Save right */
+    align-items:center;
+    padding:0 36px;               /* equal side padding */
+    gap:32px;                     /* space between buttons */
+    margin-top:12px;
+}
+
+/* ───────────────────────── buttons ───────────────────────────── */
+.btn-blue,
+.btn-green{
+    box-sizing:border-box;        /* include border in size */
+    border:2px solid transparent; /* keeps widths identical */
+    border-radius:5px;
+    min-width:110px;
+    padding:8px 24px;
+    font-size:.9rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .2s ease, filter .2s ease;
+}
+
+.btn-blue{
+    background:#2563eb;
+    color:#fff;
+}
+.btn-blue:hover{background:#1d4ed8;}
+
+.btn-green{
+    background:#d4f8e8;
+    color:#1976d2;
+    border-color:#4caf50;         /* visible green outline */
+}
+.btn-green:hover{background:#b2f2d7;}
