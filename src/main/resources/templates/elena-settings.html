@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Elena Settings</title>
+    <style>
+        body {
+        background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .header {
+            background-color: #90ee89;
+            color: white;
+            padding: 10px 0;
+            text-align: left;
+        }
+        .header nav  {
+            color: black;
+            width: 800px;
+            text-decoration: none;
+            padding: 10px 15px;
+        }
+        .header  a {
+            color: black;
+            text-decoration: none;
+            padding: 10px 15px;
+        }
+        .settings-container {
+            background-color: white;
+            width: 600px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-size: 1.3em;
+            color: #333;
+        }
+        form label {
+            display: block;
+            margin-bottom: 4px;
+            margin-top: 12px;
+            color: #222;
+        }
+        form input, form select {
+            width: 100%;
+            margin-bottom: 14px;
+            padding: 9px;
+            border: 1px solid #bbb;
+            border-radius: 3px;
+            font-size: 0.70em;
+            box-sizing: border-box;
+        }
+        .settings-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+            table-layout: fixed;
+        }
+        .settings-table th, .settings-table td {
+            border: 1px solid #ccc;
+            padding: 18px 10px;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 1em;
+        }
+        .settings-table th {
+            background: #eee;
+        }
+        .settings-table input,
+        .settings-table select {
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 7px;
+        }
+        .actions {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .btn {
+            border: 1px solid #888;
+            background: #f8f8f8;
+            border-radius: 1px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 0 2px;
+        }
+        .btn, .btn-danger, .btn-primary {
+            display: inline-block;
+            width: auto;
+            min-width: 0;
+            margin: 0 2px;
+            padding: 4px 10px;
+            font-size: 0.70em;
+       }
+        .btn-danger {
+            color: #a00;
+            border-color: #a00;
+            background: #fff0f0;
+        }
+        .btn-primary {
+            color: #fff;
+            background: #006400;
+            border-color: #006400;
+        }
+        </style>
+</head>
+<body>
+<div class="header">
+    <nav>
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/ui/dashboard}">Dashboard</a>
+    </nav>
+</div>
+<div class="settings-container">
+    <h2>Elena Settings</h2>
+    <form th:action="@{/ui/elena-settings/add}" th:object="${settingForm}" method="post">
+        <label>Setting Name</label>
+        <input type="text" th:field="*{settingName}" required />
+
+        <label>Setting Value</label>
+        <input type="text" th:field="*{settingValue}" required />
+
+        <label>Setting Type</label>
+        <select th:field="*{settingType}">
+            <option value="BOOLEAN">Boolean</option>
+            <option value="STRING">String</option>
+            <option value="NUMBER">Number</option>
+        </select>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Add Setting</button>
+    </form>
+
+    <table class="settings-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Type</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="setting : ${settings}">
+            <form th:action="@{/ui/elena-settings/update}" method="post">
+                <input type="hidden" name="id" th:value="${setting.id}" />
+                <td><input type="text" name="settingName" th:value="${setting.settingName}" required /></td>
+                <td><input type="text" name="settingValue" th:value="${setting.settingValue}" required /></td>
+                <td>
+                    <select name="settingType">
+                        <option value="BOOLEAN" th:selected="${setting.settingType=='BOOLEAN'}">Boolean</option>
+                        <option value="STRING" th:selected="${setting.settingType=='STRING'}">String</option>
+                        <option value="NUMBER" th:selected="${setting.settingType=='NUMBER'}">Number</option>
+                    </select>
+                </td>
+                <td class="actions">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a th:href="@{/ui/elena-settings/delete/{id}(id=${setting.id})}" class="btn btn-danger">Delete</a>
+                </td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
