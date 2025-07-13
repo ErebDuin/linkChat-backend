@@ -37,6 +37,7 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
     /**
      * Displays the list of users.
      * Handles database access exceptions and provides error messages.
@@ -50,17 +51,19 @@ public class UserController {
 
         try {
             model.addAttribute("users", userRepository.findAll());
+            model.addAttribute("userEditDto", new UserEditDto());
         } catch (DataAccessException e) {
             model.addAttribute("errorMessage", "Database is not available" + e.getMessage());
             model.addAttribute("users", Collections.emptyList());
         }
         return "UsersManagement";
     }
+
     /**
      * Displays the user edit form for a specific user.
      * Loads user data into the form for editing.
      *
-     * @param id User ID to edit
+     * @param id    User ID to edit
      * @param model Model to pass attributes to the view
      * @return View name for rendering
      */
@@ -83,18 +86,19 @@ public class UserController {
             }, () -> model.addAttribute("errorMessage", "User not found."));
 //        } catch (Exception e) {
 //            model.addAttribute("errorMessage", "Error loading user: " + e.getMessage());
-         } catch (DataAccessException ex) {
+        } catch (DataAccessException ex) {
             model.addAttribute("errorMessage", "Database error.");
-          }
+        }
         return "edit-user";
     }
+
     /**
      * Handles the form submission for editing a user.
      * Validates input and updates the user in the database.
      *
      * @param userEditDto DTO containing user data
-     * @param br BindingResult for validation errors
-     * @param model Model to pass attributes to the view
+     * @param br          BindingResult for validation errors
+     * @param model       Model to pass attributes to the view
      * @return View name for rendering
      */
     @PostMapping("/ui/edit-user")
@@ -136,7 +140,7 @@ public class UserController {
      * Handles user deletion.
      * Deletes a user by ID and returns a success message.
      *
-     * @param id User ID to delete
+     * @param id    User ID to delete
      * @param model Model to pass attributes to the view
      * @return View name for rendering
      */
@@ -150,8 +154,63 @@ public class UserController {
         } catch (DataAccessException ex) {
             model.addAttribute("errorMessage", "Error deleting user");
         }
-            model.addAttribute("userEditDto", new UserEditDto());
+        model.addAttribute("userEditDto", new UserEditDto());
+        model.addAttribute("redirectAfter", "/ui/user");
+        return "edit-user";
+    }
+
+    /**
+     * Displays the add user form.
+     * Prepares an empty UserEditDto for the form.
+     *
+     * @param model Model to pass attributes to the view
+     * @return View name for rendering
+     */
+    @GetMapping("/ui/add-user")
+    public String showAddUserForm(Model model) {
+        model.addAttribute("userEditDto", new UserEditDto());
+        return "edit-user";
+    }
+
+    /**
+     * Handles the form submission for adding a new user.
+     * Validates input and saves the new user to the database.
+     *
+     * @param userEditDto DTO containing user data
+     * @param br BindingResult for validation errors
+     * @param model Model to pass attributes to the view
+     * @return View name for rendering
+     */
+    @PostMapping("/ui/add-user")
+    public String addUser(@ModelAttribute("userEditDto") UserEditDto userEditDto,
+                          BindingResult br, Model model) {
+        try {
+            if (br.hasErrors()) {
+                model.addAttribute("userEditDto", userEditDto);
+                return "edit-user";
+            }
+            if (userEditDto.getName() == null || userEditDto.getName().isBlank() ||
+                    userEditDto.getEmail() == null || userEditDto.getEmail().isBlank()) {
+                model.addAttribute("errorMessage", "Name and Email are required.");
+                model.addAttribute("userEditDto", userEditDto);
+                return "edit-user";
+            }
+            User user = new User();
+            user.setName(userEditDto.getName());
+            user.setEmail(userEditDto.getEmail());
+            user.setRole(userEditDto.getRole());
+            user.setActive(userEditDto.isActive());
+            userRepository.save(user);
+
+            model.addAttribute("successMessage", "User added successfully!");
             model.addAttribute("redirectAfter", "/ui/user");
+            return "edit-user";
+        } catch (DataAccessException ex) {
+            model.addAttribute("errorMessage", "Database error: " + ex.getMessage());
+            return "edit-user";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error adding user: " + e.getMessage());
             return "edit-user";
         }
     }
+}
