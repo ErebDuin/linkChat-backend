@@ -27,9 +27,14 @@ public class chatsManagementController {
 
     @GetMapping("/chats-management")
     public String showChatsManagement(Model model) {
-        List<Chat> chats = chatRepository.findAll();
-        model.addAttribute("chats", chats);
-        return "chats-management";
+        try {
+            List<Chat> chats = chatRepository.findAll();
+            model.addAttribute("chats", chats);
+            return "chats-management";
+        } catch (Exception ex) {
+            model.addAttribute("errorMessage", "A system error occurred. Please try again later or contact support.");
+            return "maintenance";
+        }
     }
 
     @GetMapping("/new-chat")

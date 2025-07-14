@@ -10,16 +10,18 @@
 <main layout:fragment="content" class="main">
     <div class="main-container">
         <h1>Chats Management</h1>
-        <form th:action="@{/ui/chats-management}" method="post">
+        <div th:if="${errorMessage}" class="error-message">
+            <p th:text="${errorMessage}" style="color: red; font-weight: bold;"></p>
+        </div>
+        <form th:action="@{/ui/chats-management}" method="post" th:unless="${errorMessage}">
             <button type="button" name="cancel" class="action-button primary"
-                    th:onclick="'window.location.href=\'' + @{/ui/new-chat} + '\''">New Chat</button>
+                    th:onclick="'window.location.href=' + @{/ui/new-chat}">New Chat</button>
         </form>
-
-        <div class="chats-list">
+        <div class="chats-list" th:unless="${errorMessage}">
             <div class="chat-item" th:each="chat : ${chats}">
                 <div class="chat-info">
                     <div class="chat-name" th:text="${chat.title}">Chat Title</div>
-                    <div class="chat-link" th:text="${'/' + chat.link}">Link</div>
+                    <div class="chat-link" th:text="'/' + chat.link">Link</div>
                 </div>
                 <div class="chat-actions">
                     <span class="status-badge" th:classappend="${chat.active} ? 'active' : 'inactive'"
