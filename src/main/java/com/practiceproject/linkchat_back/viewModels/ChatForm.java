@@ -1,12 +1,16 @@
 package com.practiceproject.linkchat_back.viewModels;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChatForm {
 
+    @NotBlank(message="Title is required")
+    @Size(min = 2, max = 20, message = "Name must be between 2 and 20 characters")
     private String title;
 
     private String link;
@@ -16,6 +20,7 @@ public class ChatForm {
 
     private boolean active = true;
 
+    @UniqueElements
     private List<String> inviteEmails = new ArrayList<>();
 
 
