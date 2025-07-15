@@ -8,46 +8,51 @@
   </head>
   <body>
     <main layout:fragment="content" class="main">
-    <div class="main-container">
-      <h1>New Chat</h1>
-      <form th:action="@{/ui/new-chat}" th:object="${chat}" method="post">
-        <div class="field-box">
-          <label>Name</label>
-          <input type="text" name="chat-name" th:field="*{title}">
-        </div>
-        <div class="field-box">
-          <label>Link</label>
-          <input type="text" name="chat-link" th:field="*{link}" readonly>
-          <button type="submit" name="generate" class="action-button primary">Generate</button>
-        </div>
-        <div class="field-box">
-          <label>Type</label>
-          <select name="chat-type" th:field="*{type}" required>
-            <option value="" disabled hidden>Select type</option>
-            <option value="public">Public</option>
-            <option value="private">Private</option>
-          </select>
-        </div>
-        <div class="field-box">
-          <label>Active</label>
-          <input type="checkbox" name="chat-active" th:field="*{active}">
-        </div>
-        <div th:each="email, iterStat : *{inviteEmails}" class="field-box">
-          <label>Invite (Email)</label>
-          <input type="email" name="invite-email" th:field="*{inviteEmails[__${iterStat.index}__]}" />
-          <div class="secondary-button-row">
-            <button type="submit" name="addInvite" class="plus-minus-button primary">+</button>
-            <button type="submit" name="removeInvite" class="plus-minus-button danger">-</button>
+      <div class="main-container">
+        <h1>New Chat</h1>
+        <form th:action="@{/ui/new-chat}" th:object="${chat}" method="post">
+          <div class="field-box">
+            <label>Name</label>
+            <input type="text" name="chat-name" th:field="*{title}">
           </div>
-        </div>
-        <div class="field-box">
-            <button type="submit" name="save" class="action-button primary">Save</button>
-            <button type="button" name="save-n-send" class="action-button primary">Save&Send</button>
-            <button type="button" name="cancel" class="action-button danger"
-                    th:onclick="'window.location.href=\'' + @{/ui/chats-management} + '\''">Cancel</button>
-        </div>
-      </form>
-    </div>
+          <div class="field-box">
+            <label>Link</label>
+            <input type="text" name="chat-link" th:field="*{link}" readonly>
+            <button type="submit" name="generate" class="action-button primary">Generate</button>
+          </div>
+          <div class="field-box">
+            <label>Type</label>
+            <select name="chat-type" th:field="*{type}" required>
+              <option value="" disabled hidden>Select type</option>
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+            </select>
+          </div>
+          <div class="field-box">
+            <label>Active</label>
+            <input type="checkbox" name="chat-active" th:field="*{active}">
+          </div>
+          <div id="invite-container">
+            <div th:each="email, iterStat : *{inviteEmails}" class="field-box invite-field">
+              <label>Invite (Email)</label>
+              <input type="email" th:name="'inviteEmails[0]'" th:id="'inviteEmails0'" th:value="${chat.inviteEmails[0]}" />
+              <div class="secondary-button-row">
+                <button type="button" class="plus-minus-button primary" onclick="addInvite()">+</button>
+                <button type="button" class="plus-minus-button danger" onclick="removeInvite(this)">-</button>
+              </div>
+            </div>
+          </div>
+          <div class="field-box">
+              <button type="submit" name="save" class="action-button primary">Save</button>
+              <button type="submit" name="save-n-send" class="action-button primary">Save&Send</button>
+              <button type="button" name="cancel" class="action-button danger"
+                      th:onclick="'window.location.href=\'' + @{/ui/chats-management} + '\''">Cancel</button>
+          </div>
+        </form>
+      </div>
     </main>
+    <div layout:fragment="page-scripts">
+      <script th:src="@{/js/addRemoveEmailField.js}"></script>
+    </div>
   </body>
 </html>
