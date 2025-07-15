@@ -121,6 +121,12 @@
 			<version>1.18.30</version>   <!-- or the latest -->
 			<scope>provided</scope>      <!-- Lombok code is generated at compile-time -->
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 	<build>
