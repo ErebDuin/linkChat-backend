@@ -24,7 +24,7 @@
                 <div class="chat-actions">
                     <span class="status-badge" th:classappend="${chat.active} ? 'active' : 'inactive'"
                           th:text="${chat.active} ? 'Active' : 'Inactive'">Status</span>
-                    <a class="settings-button" th:href="@{'/ui/chat-settings/' + ${chat.chatId}}">Settings</a>
+                    <a class="settings-button" th:href="@{'/ui/chat-settings?id=' + ${chat.chatId}}">Settings</a>
                 </div>
             </div>
         </div>
