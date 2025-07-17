@@ -1,12 +1,13 @@
-<!-- src/main/resources/templates/template.html -->
 <!DOCTYPE html>
-<html>
-<head>
-    <title>You're Invited to Join a Chat</title>
-</head>
-<body>
-<h1>Hello, {{username}}!</h1>
-<p>You have been invited to join a chat. Please <a href="{{link}}">click here</a> to access the conversation.</p>
-<p>Note: This invitation link will remain active for {{ttlHours}} hours.</p>
-</body>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+  <head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$Title$</title>
+  </head>
+  <body>
+    <main layout:fragment="content" class="main">
+    $END$
+    </main>
+  </body>
 </html>

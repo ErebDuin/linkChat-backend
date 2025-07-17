@@ -35,24 +35,24 @@ public class DashboardController {
 
     @GetMapping("/ui/dashboard")
     public String dashboard(Model model) {
-        // Count total users
-        long totalUsers = userRepository.count();
+        try {
+            long totalUsers = userRepository.count();
+            List<Chat> allChats = chatRepository.findAll();
+            long totalChats = allChats.size();
+            long totalMessages = chatMessageRepository.count();
 
-        // Get all chats and count them
-        List<Chat> allChats = chatRepository.findAll();
-        long totalChats = allChats.size();
-
-        // Count total messages
-        long totalMessages = chatMessageRepository.count();
-
-        model.addAttribute("message", message);
-        model.addAttribute("chatResult", chatCreationResult);
-        model.addAttribute("settings", settings);
-        model.addAttribute("chats", allChats);
-        model.addAttribute("totalUsers", totalUsers);
-        model.addAttribute("totalChats", totalChats);
-        model.addAttribute("totalMessages", totalMessages);
-        return "dashboard";
+            model.addAttribute("message", message);
+            model.addAttribute("chatResult", chatCreationResult);
+            model.addAttribute("settings", settings);
+            model.addAttribute("chats", allChats);
+            model.addAttribute("totalUsers", totalUsers);
+            model.addAttribute("totalChats", totalChats);
+            model.addAttribute("totalMessages", totalMessages);
+            return "dashboard";
+        } catch (Exception ex) {
+            model.addAttribute("errorMessage", "A system error occurred. Please try again later or contact support.");
+            return "maintenance";
+        }
     }
 
     @PostMapping("/ui/dashboard")

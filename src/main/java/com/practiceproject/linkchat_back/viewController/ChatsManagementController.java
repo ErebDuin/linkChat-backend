@@ -5,6 +5,8 @@ import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
 import com.practiceproject.linkchat_back.services.ChatService;
 import com.practiceproject.linkchat_back.viewModels.ChatForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/ui")
-public class chatsManagementController {
+public class ChatsManagementController {
+    private static final Logger logger = LoggerFactory.getLogger(ChatsManagementController.class);
 
     @Autowired
     private ChatRepository chatRepository;
@@ -28,9 +30,14 @@ public class chatsManagementController {
 
     @GetMapping("/chats-management")
     public String showChatsManagement(Model model) {
-        List<Chat> chats = chatRepository.findAll();
-        model.addAttribute("chats", chats);
-        return "chats-management";
+        try {
+            List<Chat> chats = chatRepository.findAll();
+            model.addAttribute("chats", chats);
+            return "chats-management";
+        } catch (Exception ex) {
+            model.addAttribute("errorMessage", "A system error occurred. Please try again later or contact support.");
+            return "maintenance";
+        }
     }
 
     @GetMapping("/new-chat")
@@ -97,35 +104,10 @@ public class chatsManagementController {
         return "new-chat";
     }
 
-    @PostMapping(value = "/new-chat", params = "addInvite")
-    public String addInviteField(@ModelAttribute("chat") ChatForm form, Model model) {
-        form.getInviteEmails().add(""); // Add an empty field
-        model.addAttribute("chat", form);
-        return "new-chat";
-    }
-
-    @PostMapping(value = "/new-chat", params = "removeInvite")
-    public String removeInviteField(@ModelAttribute("chat") ChatForm form, Model model) {
-        List<String> invites = form.getInviteEmails();
-        if (!invites.isEmpty()) {
-            invites.remove(invites.size() - 1); // Remove last
-        }
-        model.addAttribute("chat", form);
-        return "new-chat";
-    }
-
-
     @PostMapping(value = "/new-chat", params = "save")
-    public String saveChat(@ModelAttribute("chat") ChatForm form) {
-        Chat chat = new Chat();
-        chat.setTitle(form.getTitle());
-        chat.setLink(form.getLink());
-        chat.setType(form.getType());
-        chat.setActive(form.isActive());
-        chat.setInviteEmails(new ArrayList<>(form.getInviteEmails())); // copy emails
-
-        chatRepository.save(chat);
-
+    public String saveNewChat(@ModelAttribute("chat") ChatForm form) {
+        chatService.saveChat(form);
+        logger.info("New chat saved with title: {}", form.getTitle());
         return "redirect:/ui/chats-management";
     }
 }
