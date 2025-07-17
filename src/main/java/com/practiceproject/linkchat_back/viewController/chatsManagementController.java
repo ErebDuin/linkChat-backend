@@ -59,20 +59,20 @@ public class chatsManagementController {
         dto.setLink(chat.getLink());
         dto.setType(chat.getType());
         dto.setActive(chat.isActive());
-        model.addAttribute("chatSettingsDto", dto);
+        model.addAttribute("chat", dto);
         return "chat-settings";
     }
 
     @PostMapping("/chat-settings")
-    public String editChat(@ModelAttribute("chatSettingsDto") ChatSettingsDto chatSettingsDto,
+    public String editChat(@ModelAttribute("chat") ChatSettingsDto chatSettingsDto,
                            BindingResult br, Model model) {
         if (br.hasErrors()) {
-            model.addAttribute("chatSettingsDto", chatSettingsDto);
+            model.addAttribute("chat", chatSettingsDto);
             return "chat-settings";
         }
         if (chatSettingsDto.getId() == null || chatSettingsDto.getTitle() == null || chatSettingsDto.getTitle().isBlank()) {
             model.addAttribute("errorMessage", "Name is required.");
-            model.addAttribute("chatEditDto", chatSettingsDto);
+            model.addAttribute("chat", chatSettingsDto);
             return "chat-settings";
         }
         Chat chat = chatRepository.findById(chatSettingsDto.getId()).orElse(null);
@@ -85,7 +85,7 @@ public class chatsManagementController {
         chat.setActive(chatSettingsDto.isActive());
         chatRepository.save(chat);
         model.addAttribute("successMessage", "Chat updated successfully!");
-        model.addAttribute("chatSettingsDto", chatSettingsDto);
+        model.addAttribute("chat", chatSettingsDto);
         model.addAttribute("redirectAfter", "/ui/chats-management");
         return "chat-settings";
     }
