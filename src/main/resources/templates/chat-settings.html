@@ -11,7 +11,8 @@
 <main layout:fragment="content" class="main">
     <div class="main-container">
         <h1>Chat Settings</h1>
-        <form th:action="@{/ui/chat-settings/save}" th:object="${chat}" method="post">
+        <form th:action="@{/ui/chat-settings/save}"
+              th:object="${chatSettingsDto}" method="post">
             <div class="field-box">
                 <label>Name</label>
                 <input type="text" th:field="*{title}" required>
