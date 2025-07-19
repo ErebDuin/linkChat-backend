@@ -1,7 +1,6 @@
 package com.practiceproject.linkchat_back.viewController;
 
 import com.practiceproject.linkchat_back.dtos.ChatSettingsDto;
-import com.practiceproject.linkchat_back.dtos.UserEditDto;
 import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
 import com.practiceproject.linkchat_back.services.ChatService;
@@ -21,6 +20,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import java.util.List;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 /**
  * Controller for chats management operations.
  * Handles displaying, editing, and deleting chats via UI endpoints.
@@ -180,4 +182,36 @@ public class ChatsManagementController {
             return "chat-settings";
         }
     }
+
+    @PostMapping("/chat-settings/delete")
+    public String deleteChat(@ModelAttribute("chatSettingsDto") ChatSettingsDto chatSettingsDto,
+                             BindingResult br, Model model,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            System.out.println("Deleting chat with ID: " + chatSettingsDto.getId());
+            if (br.hasErrors()) {
+                model.addAttribute("chatSettingsDto", chatSettingsDto);
+                return "chat-settings";
+            }
+
+            if (chatSettingsDto == null ||
+                    chatSettingsDto.getId() == null ) {
+                model.addAttribute("errorMessage", "Name is required.");
+                model.addAttribute("chatSettingsDto", chatSettingsDto);
+                return "chat-settings";
+            }
+            chatRepository.findById(chatSettingsDto.getId()).ifPresentOrElse(chat -> {
+                chatRepository.delete(chat);
+            },
+
+                    () -> {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Chat not found");
+            });
+            redirectAttributes.addFlashAttribute("successMessage", "Chat deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting chat: " + e.getMessage());
+        }
+        return "redirect:/ui/chats-management";
+    }
+
 }
