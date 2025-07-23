@@ -42,7 +42,7 @@ public class ChatController {
     public ChatController(ChatRepository chatRepository,
                           ChatUserRepository chatUserRepository,
                           ChatMessageRepository chatMessageRepository,
-                          ChatSettingRepository chatSettingRepository, ChatSettingRepository chatSettingRepository1) {
+                          ChatSettingRepository chatSettingRepository) {
         this.chatRepository = chatRepository;
         this.chatUserRepository = chatUserRepository;
         this.chatMessageRepository = chatMessageRepository;
@@ -118,7 +118,7 @@ public class ChatController {
 
         if (chatId <= 0) {
             return ResponseEntity.badRequest()
-                    .body("chatId must be a positive number"); // 400
+                    .body("chatId must be a positive number");
         }
         if (!chatRepository.existsById(chatId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -129,7 +129,10 @@ public class ChatController {
                 .map(s -> new ChatSettingDtoApi(s.getName(), s.getValue()))
                 .toList();
 
-        return ResponseEntity.ok(settings);
+        if (settings.isEmpty()) {
+            return ResponseEntity.ok(new ApiResponse("No settings for this chat"));
+        }
+        return ResponseEntity.ok(("Settings fetched" + settings));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -178,7 +181,8 @@ public class ChatController {
             chatSettingRepository.save(s);
         });
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.CREATED)          // 201
+                .body(new ApiResponse("Settings saved"));
     }
 
     /** Simple response wrapper */
