@@ -26,6 +26,7 @@ import com.practiceproject.linkchat_back.model.ChatMessage;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -106,10 +107,73 @@ public class ChatController {
         msg.setSender(dto.sender);
         msg.setRecipient(dto.recipient);
         msg.setTimestamp(dto.timestamp);
+        msg.setMessageType(ChatMessage.MessageType.TEXT); // Set as TEXT message
         msg.setChat(chat);
         chatMessageRepository.save(msg);
 
         return ResponseEntity.ok(new ChatController.ApiResponse("Message sent"));
+    }
+
+    @PostMapping("/{link}/image")
+    public ResponseEntity<ApiResponse> sendImageMessage(@PathVariable String link,
+                                                      @RequestBody Map<String, Object> request) {
+        try {
+            Optional<Chat> chatOpt = chatRepository.findByLink(link);
+            if (chatOpt.isEmpty()) {
+                logger.warn("Chat with link {} not found", link);
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse("Chat not found"));
+            }
+
+            String sender = (String) request.get("sender");
+            String recipient = (String) request.get("recipient");
+            String imageBase64 = (String) request.get("imageBase64");
+            String filename = (String) request.get("filename");
+            String contentType = (String) request.get("contentType");
+
+            if (sender == null || recipient == null || imageBase64 == null) {
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse("Missing required fields"));
+            }
+
+            // Clean the base64 string - remove data URL prefix if present
+            if (imageBase64.contains(",")) {
+                imageBase64 = imageBase64.substring(imageBase64.indexOf(",") + 1);
+            }
+
+            // Remove any whitespace or newlines
+            imageBase64 = imageBase64.replaceAll("\\s", "");
+
+            Chat chat = chatOpt.get();
+            ChatMessage msg = new ChatMessage();
+            msg.setSender(sender);
+            msg.setRecipient(recipient);
+            msg.setMessageType(ChatMessage.MessageType.IMAGE);
+            msg.setTimestamp(java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+            msg.setChat(chat);
+
+            // Decode and save binary image data
+            try {
+                byte[] imageData = java.util.Base64.getDecoder().decode(imageBase64);
+                msg.setImageData(imageData);
+                msg.setImageFilename(filename);
+                msg.setImageContentType(contentType);
+                // Set a default message text for image messages to satisfy NOT NULL constraint
+                msg.setMessageText(""); // or you could use "[Image]" or null if you modify the DB
+            } catch (IllegalArgumentException e) {
+                logger.error("Invalid base64 image data: {}", e.getMessage());
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse("Invalid base64 image data"));
+            }
+
+            chatMessageRepository.save(msg);
+
+            return ResponseEntity.ok(new ApiResponse("Image message sent"));
+        } catch (Exception e) {
+            logger.error("Error sending image message", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("Error sending image message: " + e.getMessage()));
+        }
     }
 
     @Validated
@@ -201,4 +265,3 @@ public class ChatController {
 //        message.setChat(chat);
 //        chatMessageRepository.save(message);
 //    }
-
