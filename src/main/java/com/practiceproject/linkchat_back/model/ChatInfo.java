@@ -24,14 +24,30 @@ public class ChatInfo {
                     ChatRepository chatRepository,
                     ChatUserRepository chatUserRepository,
                     ChatMessageRepository messageRepository) {
-            Chat chat = chatRepository.findByLink(link).orElse(null);
-            if (chat != null) {
-                long chatId = chat.getChatId();
-                this.title = chat.getTitle();
-                this.link = chat.getLink();
-                this.users = chatUserRepository.getChatUsers(chatId);
-                this.messages = messageRepository.getMessagesByChatId(chatId);
-            } else {
+            try {
+                Chat chat = chatRepository.findByLink(link).orElse(null);
+                if (chat != null) {
+                    long chatId = chat.getChatId();
+                    this.title = chat.getTitle();
+                    this.link = chat.getLink();
+                    this.users = chatUserRepository.getChatUsers(chatId);
+
+                    // Try to get messages with error handling
+                    try {
+                        this.messages = messageRepository.getMessagesByChatId(chatId);
+                    } catch (Exception e) {
+                        // Fallback to empty list if there's an issue
+                        System.err.println("Error fetching messages for chat " + chatId + ": " + e.getMessage());
+                        this.messages = new ArrayList<>();
+                    }
+                } else {
+                    this.title = null;
+                    this.link = null;
+                    this.users = new ArrayList<>();
+                    this.messages = new ArrayList<>();
+                }
+            } catch (Exception e) {
+                System.err.println("Error in ChatInfo constructor: " + e.getMessage());
                 this.title = null;
                 this.link = null;
                 this.users = new ArrayList<>();
@@ -71,4 +87,3 @@ public class ChatInfo {
         this.messages = messages;
     }
 }
-

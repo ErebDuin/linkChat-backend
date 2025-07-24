@@ -13,6 +13,20 @@ public class ChatMessage {
     @Column(name = "message_text")
     private String messageText;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "message_type", nullable = false)
+    private MessageType messageType = MessageType.TEXT;
+
+    @Lob
+    @Column(name = "image_data")
+    private byte[] imageData;
+
+    @Column(name = "image_filename")
+    private String imageFilename;
+
+    @Column(name = "image_content_type")
+    private String imageContentType;
+
     private String timestamp;
     private String sender;
     private String recipient;
@@ -20,6 +34,10 @@ public class ChatMessage {
     @ManyToOne
     @JoinColumn(name = "chat_id")
     private Chat chat;
+
+    public enum MessageType {
+        TEXT, IMAGE
+    }
 
     public ChatMessage() {}
 
@@ -37,6 +55,38 @@ public class ChatMessage {
 
     public void setMessageText(String messageText) {
         this.messageText = messageText;
+    }
+
+    public MessageType getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
+    }
+
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
+
+    public String getImageFilename() {
+        return imageFilename;
+    }
+
+    public void setImageFilename(String imageFilename) {
+        this.imageFilename = imageFilename;
+    }
+
+    public String getImageContentType() {
+        return imageContentType;
+    }
+
+    public void setImageContentType(String imageContentType) {
+        this.imageContentType = imageContentType;
     }
 
     public String getTimestamp() {
