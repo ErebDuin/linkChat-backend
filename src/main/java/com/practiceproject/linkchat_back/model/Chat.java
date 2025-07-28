@@ -31,7 +31,7 @@ public class Chat {
     @CollectionTable(name = "chat_invite_email",
             joinColumns = @JoinColumn(name = "chat_id"))
     @Column(name = "email", nullable = false)
-    private List<String> inviteEmails = new ArrayList<>();
+    private List<InviteEmailEntry> inviteEmails;
 
     public Chat() {}
 
@@ -76,11 +76,11 @@ public class Chat {
         this.link = link;
     }
 
-    public List<String> getInviteEmails() {
+    public List<InviteEmailEntry> getInviteEmails() {
         return inviteEmails;
     }
 
-    public void setInviteEmails(List<String> inviteEmails) {
+    public void setInviteEmails(List<InviteEmailEntry> inviteEmails) {
         this.inviteEmails = inviteEmails;
     }
 

@@ -2,9 +2,11 @@ package com.practiceproject.linkchat_back.viewController;
 
 import com.practiceproject.linkchat_back.dtos.ChatSettingsDto;
 import com.practiceproject.linkchat_back.model.Chat;
+import com.practiceproject.linkchat_back.model.InviteEmailEntry;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
 import com.practiceproject.linkchat_back.services.ChatService;
 import com.practiceproject.linkchat_back.viewModels.ChatForm;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 import java.util.List;
 
@@ -43,11 +44,13 @@ import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 public class ChatsManagementController {
     private static final Logger logger = LoggerFactory.getLogger(ChatsManagementController.class);
 
-    @Autowired
-    private ChatRepository chatRepository;
+    private final ChatRepository chatRepository;
+    private final ChatService chatService;
 
-    @Autowired
-    private ChatService chatService;
+    public ChatsManagementController(ChatRepository chatRepository, ChatService chatService) {
+        this.chatRepository = chatRepository;
+        this.chatService = chatService;
+    }
 
     /**
      * Displays the list of chats.
@@ -80,10 +83,9 @@ public class ChatsManagementController {
 
     @GetMapping("/new-chat")
     public String showChatForm(Model model) {
-        ChatForm form = new ChatForm();
-        form.setType(null);
-        form.getInviteEmails().add("");
-        model.addAttribute("chat", form);
+        if (!model.containsAttribute("chat")) {
+            model.addAttribute("chat", chatService.createDefaultChatForm());
+        }
         return "new-chat";
     }
 
@@ -97,16 +99,24 @@ public class ChatsManagementController {
      */
 
     @PostMapping(value = "/new-chat", params = "generate")
-    public String generateLink(@ModelAttribute("chat") ChatForm form, Model model) {
+    public String generateLink(@ModelAttribute("chat") ChatForm form, RedirectAttributes redirectAttributes) {
         chatService.generateRandomLink(form);
-        model.addAttribute("chat", form);
-        return "new-chat";
+        redirectAttributes.addFlashAttribute("chat", form);
+        logger.info("::Generated new chat link: {}", form.getLink());
+        return "redirect:/ui/new-chat";
     }
 
     @PostMapping(value = "/new-chat", params = "save")
-    public String saveNewChat(@ModelAttribute("chat") ChatForm form) {
+    public String saveNewChat(@Valid @ModelAttribute("chat") ChatForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            logger.warn("::Validation errors: {}", result.getAllErrors());
+            return "new-chat";
+        }
+
+        chatService.addInviteEmail(form, null);
+        logger.info("::Adding invite emails: {}", form.getInviteEmails());
         chatService.saveChat(form);
-        logger.info("New chat saved with title: {}", form.getTitle());
+        logger.info("::New chat saved with title: {}", form.getTitle());
         return "redirect:/ui/chats-management";
     }
 

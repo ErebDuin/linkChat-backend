@@ -8,11 +8,12 @@ window.addInvite = function () {
 
   const input = newField.querySelector('input[type="email"]');
   input.value = '';
-  input.name = `inviteEmails[${newIndex}]`;
-  input.id = `inviteEmails${newIndex}`;
+  input.name = `inviteEmails[${newIndex}].email`;
+  input.id = `inviteEmails${newIndex}.email`;
+
+  input.removeAttribute('th:field');
 
   container.appendChild(newField);
-  console.log("addRemoveEmailField.js loaded");
 };
 
 window.removeInvite = function (button) {
