@@ -145,6 +145,13 @@
 [name="cancel"] {
     margin-left: 15px;
 }
+.error-message {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    color: #B73A3A;
+    font-size: 14px;
+}
 
 @media (max-width: 600px) {
   .center, .modal-content {

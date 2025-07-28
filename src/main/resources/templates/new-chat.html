@@ -13,7 +13,8 @@
         <form th:action="@{/ui/new-chat}" th:object="${chat}" method="post">
           <div class="field-box">
             <label>Name</label>
-            <input type="text" name="chat-name" th:field="*{title}">
+            <input type="text" name="chat-name" th:field="*{title}" required>
+            <div class="error-message" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
           </div>
           <div class="field-box">
             <label>Link</label>
@@ -33,9 +34,11 @@
             <input type="checkbox" name="chat-active" th:field="*{active}">
           </div>
           <div id="invite-container">
-            <div th:each="email, iterStat : *{inviteEmails}" class="field-box invite-field">
+            <div th:each="invite, iterStat : *{inviteEmails}" class="field-box invite-field">
               <label>Invite (Email)</label>
-              <input type="email" th:name="'inviteEmails[0]'" th:id="'inviteEmails0'" th:value="${chat.inviteEmails[0]}" />
+              <input type="email"
+                     th:field="*{inviteEmails[__${iterStat.index}__].email}"
+                     required />
               <div class="secondary-button-row">
                 <button type="button" class="plus-minus-button primary" onclick="addInvite()">+</button>
                 <button type="button" class="plus-minus-button danger" onclick="removeInvite(this)">-</button>

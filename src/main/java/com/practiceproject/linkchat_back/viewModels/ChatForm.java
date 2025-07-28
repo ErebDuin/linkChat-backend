@@ -1,6 +1,9 @@
 package com.practiceproject.linkchat_back.viewModels;
 
+import com.practiceproject.linkchat_back.model.InviteEmailEntry;
+import com.practiceproject.linkchat_back.validators.UniqueTitle;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.UniqueElements;
 
@@ -11,8 +14,10 @@ public class ChatForm {
 
     @NotBlank(message="Title is required")
     @Size(min = 2, max = 20, message = "Name must be between 2 and 20 characters")
+    @UniqueTitle
     private String title;
 
+    @NotNull
     private String link;
 
     @NotBlank(message = "Type is required")
@@ -21,7 +26,7 @@ public class ChatForm {
     private boolean active = true;
 
     @UniqueElements
-    private List<String> inviteEmails = new ArrayList<>();
+    private List<InviteEmailEntry> inviteEmails = new ArrayList<>();
 
 
     public String getTitle() {
@@ -56,11 +61,11 @@ public class ChatForm {
         this.active = active;
     }
 
-    public List<String> getInviteEmails() {
+    public List<InviteEmailEntry> getInviteEmails() {
         return inviteEmails;
     }
 
-    public void setInviteEmails(List<String> inviteEmails) {
+    public void setInviteEmails(List<InviteEmailEntry> inviteEmails) {
         this.inviteEmails = inviteEmails;
     }
 }

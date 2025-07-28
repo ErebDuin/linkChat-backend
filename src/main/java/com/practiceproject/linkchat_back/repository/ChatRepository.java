@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
     Optional<Chat> findByLink(String link);
+
+    boolean existsByTitle(String title);
 }
