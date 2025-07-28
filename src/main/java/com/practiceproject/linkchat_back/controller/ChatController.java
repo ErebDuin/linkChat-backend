@@ -1,28 +1,32 @@
 package com.practiceproject.linkchat_back.controller;
+import com.practiceproject.linkchat_back.dtos.ChatSettingDtoApi;
 import com.practiceproject.linkchat_back.dtos.MessageDto;
 import com.practiceproject.linkchat_back.model.ChatInfo;
+import com.practiceproject.linkchat_back.model.ChatSetting;
 import com.practiceproject.linkchat_back.repository.ChatMessageRepository;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
+import com.practiceproject.linkchat_back.repository.ChatSettingRepository;
 import com.practiceproject.linkchat_back.repository.ChatUserRepository;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.model.ChatMessage;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -33,13 +37,17 @@ public class ChatController {
     private final ChatRepository chatRepository;
     private final ChatUserRepository chatUserRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final ChatSettingRepository chatSettingRepository;
+
 
     public ChatController(ChatRepository chatRepository,
                           ChatUserRepository chatUserRepository,
-                          ChatMessageRepository chatMessageRepository) {
+                          ChatMessageRepository chatMessageRepository,
+                          ChatSettingRepository chatSettingRepository) {
         this.chatRepository = chatRepository;
         this.chatUserRepository = chatUserRepository;
         this.chatMessageRepository = chatMessageRepository;
+        this.chatSettingRepository = chatSettingRepository;
     }
 
     @Operation(summary = "Get chat data by chat link")
@@ -99,10 +107,146 @@ public class ChatController {
         msg.setSender(dto.sender);
         msg.setRecipient(dto.recipient);
         msg.setTimestamp(dto.timestamp);
+        msg.setMessageType(ChatMessage.MessageType.TEXT); // Set as TEXT message
         msg.setChat(chat);
         chatMessageRepository.save(msg);
 
         return ResponseEntity.ok(new ChatController.ApiResponse("Message sent"));
+    }
+
+    @PostMapping("/{link}/image")
+    public ResponseEntity<ApiResponse> sendImageMessage(@PathVariable String link,
+                                                      @RequestBody Map<String, Object> request) {
+        try {
+            Optional<Chat> chatOpt = chatRepository.findByLink(link);
+            if (chatOpt.isEmpty()) {
+                logger.warn("Chat with link {} not found", link);
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse("Chat not found"));
+            }
+
+            String sender = (String) request.get("sender");
+            String recipient = (String) request.get("recipient");
+            String imageBase64 = (String) request.get("imageBase64");
+            String filename = (String) request.get("filename");
+            String contentType = (String) request.get("contentType");
+
+            if (sender == null || recipient == null || imageBase64 == null) {
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse("Missing required fields"));
+            }
+
+            // Clean the base64 string - remove data URL prefix if present
+            if (imageBase64.contains(",")) {
+                imageBase64 = imageBase64.substring(imageBase64.indexOf(",") + 1);
+            }
+
+            // Remove any whitespace or newlines
+            imageBase64 = imageBase64.replaceAll("\\s", "");
+
+            Chat chat = chatOpt.get();
+            ChatMessage msg = new ChatMessage();
+            msg.setSender(sender);
+            msg.setRecipient(recipient);
+            msg.setMessageType(ChatMessage.MessageType.IMAGE);
+            msg.setTimestamp(java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+            msg.setChat(chat);
+
+            // Decode and save binary image data
+            try {
+                byte[] imageData = java.util.Base64.getDecoder().decode(imageBase64);
+                msg.setImageData(imageData);
+                msg.setImageFilename(filename);
+                msg.setImageContentType(contentType);
+                // Set a default message text for image messages to satisfy NOT NULL constraint
+                msg.setMessageText(""); // or you could use "[Image]" or null if you modify the DB
+            } catch (IllegalArgumentException e) {
+                logger.error("Invalid base64 image data: {}", e.getMessage());
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse("Invalid base64 image data"));
+            }
+
+            chatMessageRepository.save(msg);
+
+            return ResponseEntity.ok(new ApiResponse("Image message sent"));
+        } catch (Exception e) {
+            logger.error("Error sending image message", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("Error sending image message: " + e.getMessage()));
+        }
+    }
+
+    @Validated
+    @GetMapping("/{chatId}/settings")
+    public ResponseEntity<?> getSettings(@PathVariable Long chatId) {
+
+        if (chatId <= 0) {
+            return ResponseEntity.badRequest()
+                    .body("chatId must be a positive number");
+        }
+        if (!chatRepository.existsById(chatId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Chat id " + chatId + " not found");
+        }
+        List<ChatSettingDtoApi> settings = chatSettingRepository.findByChatId(chatId)
+                .stream()
+                .map(s -> new ChatSettingDtoApi(s.getName(), s.getValue()))
+                .toList();
+
+        if (settings.isEmpty()) {
+            return ResponseEntity.ok(new ApiResponse("No settings for this chat"));
+        }
+        return ResponseEntity.ok(("Settings fetched" + settings));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        if ("chatId".equals(ex.getName())) {
+            return ResponseEntity.badRequest().body("chatId must be a number");
+        }
+        return ResponseEntity.badRequest().body("Invalid parameter: " + ex.getName());
+    }
+
+
+
+
+    @PostMapping("/id/{chatId}/settings")
+    public ResponseEntity<?> upsertSettings(
+            @PathVariable @Positive Long chatId,
+            @Valid @RequestBody List<@Valid ChatSettingDtoApi> dtoList,
+            BindingResult br) {
+
+        if (chatId <= 0) {
+            return ResponseEntity.badRequest()
+                    .body("chatId must be a positive number"); // 400
+        }
+
+        if (br.hasErrors() || dtoList.isEmpty()) {
+            String msg = br.getFieldErrors().stream()
+                    .map(e -> e.getField() + " " + e.getDefaultMessage())
+                    .findFirst()
+                    .orElse("Invalid payload");
+            return ResponseEntity.badRequest().body(msg);               // 400
+        }
+
+        if (!chatRepository.existsById(chatId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)          // 404
+                    .body("Chat id " + chatId + " not found");
+        }
+
+        dtoList.forEach(d -> {
+            ChatSetting s = chatSettingRepository
+                    .findByChatIdAndName(chatId, d.name())
+                    .orElseGet(ChatSetting::new);
+
+            s.setChatId(chatId);
+            s.setName(d.name());
+            s.setValue(d.value());
+            chatSettingRepository.save(s);
+        });
+
+        return ResponseEntity.status(HttpStatus.CREATED)          // 201
+                .body(new ApiResponse("Settings saved"));
     }
 
     /** Simple response wrapper */
@@ -121,4 +265,3 @@ public class ChatController {
 //        message.setChat(chat);
 //        chatMessageRepository.save(message);
 //    }
-
