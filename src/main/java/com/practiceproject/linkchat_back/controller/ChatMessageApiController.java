@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,8 @@ import java.util.Map;
 @RequestMapping("/api/messages")
 @CrossOrigin(origins = "*")
 public class ChatMessageApiController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChatMessageApiController.class);
 
     @Autowired
     private ChatMessageService chatMessageService;
@@ -43,16 +47,16 @@ public class ChatMessageApiController {
     @PostMapping("/image")
     public ResponseEntity<ChatMessageResponse> sendImageMessage(@RequestBody ImageMessageRequest request) {
         try {
-            if (request.getSender() == null || request.getRecipient() == null ||
-                request.getImageBase64() == null || request.getImageBase64().isEmpty()) {
-                return ResponseEntity.badRequest().build();
-            }
-
+            logger.info("Attempting to send image message via API");
             ChatMessage message = chatMessageService.sendImageMessage(request);
+            logger.info("Successfully saved image message via API with ID: {}", message.getMessageId());
+
             return ResponseEntity.ok(new ChatMessageResponse(message));
         } catch (RuntimeException e) {
+            logger.error("Runtime error sending image message via API - Error: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
+            logger.error("Unexpected error sending image message via API - Error: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -60,20 +64,24 @@ public class ChatMessageApiController {
     @GetMapping("/{messageId}/image")
     public ResponseEntity<String> getImageData(@PathVariable Long messageId) {
         try {
+            logger.info("Attempting to retrieve image data for message ID: {}", messageId);
+
             ChatMessage message = chatMessageService.findById(messageId);
-            if (message == null || message.getMessageType() != ChatMessage.MessageType.IMAGE) {
-                return ResponseEntity.notFound().build();
-            }
+
 
             if (message.getImageData() != null) {
-                String base64Image = java.util.Base64.getEncoder().encodeToString(message.getImageData());
-                return ResponseEntity.ok(base64Image);
+                logger.info("Successfully retrieved image data for message ID: {}, data length: {}",
+                        messageId, message.getImageData().length());
+                return ResponseEntity.ok(message.getImageData());
             }
 
+            logger.error("Image data is null for message ID: {}", messageId);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
+            logger.error("Error retrieving image data for message ID: {} - Error: {}", messageId, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
 }
+

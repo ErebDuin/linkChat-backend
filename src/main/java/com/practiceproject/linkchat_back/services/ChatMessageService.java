@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,15 +46,10 @@ public class ChatMessageService {
         message.setMessageType(ChatMessage.MessageType.IMAGE);
         message.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
-        // Decode base64 image data and save as binary
-        try {
-            byte[] imageData = Base64.getDecoder().decode(request.getImageBase64());
-            message.setImageData(imageData);
-            message.setImageFilename(request.getFilename());
-            message.setImageContentType(request.getContentType());
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid base64 image data", e);
-        }
+        // Store the entire base64 string including data URL prefix as text
+        message.setImageData(request.getImageBase64());
+        message.setImageFilename(request.getFilename());
+        message.setImageContentType(request.getContentType());
 
         if (request.getChatId() != null) {
             Chat chat = chatRepository.findById(request.getChatId()).orElse(null);
