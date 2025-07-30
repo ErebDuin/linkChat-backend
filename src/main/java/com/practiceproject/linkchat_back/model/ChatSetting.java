@@ -4,43 +4,31 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "chat_settings",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"chat_id","name"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"chat_id", "setting_key"}))
 public class ChatSetting {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "chat_id", nullable = false)
     private Long chatId;
 
-    @Column(nullable = false)
-    private String name;
+    @Column(name = "setting_key", nullable = false)
+    private String settingKey;
 
-    @Column(nullable = false)
-    private String value;
+    @Column(name = "setting_value", nullable = false)
+    private String settingValue;
 
-    public Long getChatId() {
-        return chatId;
-    }
+    public ChatSetting() {}
 
-    public void setChatId(Long chatId) {
+    public ChatSetting(Long chatId, String settingKey, String settingValue) {
         this.chatId = chatId;
+        this.settingKey = settingKey;
+        this.settingValue = settingValue;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    // Getters и Setters
 
     public Long getId() {
         return id;
@@ -50,4 +38,27 @@ public class ChatSetting {
         this.id = id;
     }
 
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
+    }
+
+    public String getSettingKey() {
+        return settingKey;
+    }
+
+    public void setSettingKey(String settingKey) {
+        this.settingKey = settingKey;
+    }
+
+    public String getSettingValue() {
+        return settingValue;
+    }
+
+    public void setSettingValue(String settingValue) {
+        this.settingValue = settingValue;
+    }
 }

@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface ChatSettingRepository extends JpaRepository<ChatSetting, Long> {
     List<ChatSetting> findByChatId(Long chatId);
-    Optional<ChatSetting> findByChatIdAndName(Long chatId, String name);
+    Optional<ChatSetting> findByChatIdAndSettingKey(Long chatId, String settingKey);
 }

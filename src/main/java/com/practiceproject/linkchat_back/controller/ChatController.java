@@ -1,5 +1,5 @@
 package com.practiceproject.linkchat_back.controller;
-import com.practiceproject.linkchat_back.dtos.ChatSettingDtoApi;
+import com.practiceproject.linkchat_back.dtos.ChatSettingsDtoAPI;
 import com.practiceproject.linkchat_back.dtos.MessageDto;
 import com.practiceproject.linkchat_back.model.ChatInfo;
 import com.practiceproject.linkchat_back.model.ChatSetting;
@@ -188,15 +188,15 @@ public class ChatController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Chat id " + chatId + " not found");
         }
-        List<ChatSettingDtoApi> settings = chatSettingRepository.findByChatId(chatId)
+        List<ChatSettingsDtoAPI.Setting> settings = chatSettingRepository.findByChatId(chatId)
                 .stream()
-                .map(s -> new ChatSettingDtoApi(s.getName(), s.getValue()))
+                .map(s -> new ChatSettingsDtoAPI.Setting(s.getSettingKey(), s.getSettingValue()))
                 .toList();
 
         if (settings.isEmpty()) {
             return ResponseEntity.ok(new ApiResponse("No settings for this chat"));
         }
-        return ResponseEntity.ok(("Settings fetched" + settings));
+        return ResponseEntity.ok(new ChatSettingsDtoAPI(settings));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -210,10 +210,10 @@ public class ChatController {
 
 
 
-    @PostMapping("/id/{chatId}/settings")
+    @PostMapping("/{chatId}/settings")
     public ResponseEntity<?> upsertSettings(
             @PathVariable @Positive Long chatId,
-            @Valid @RequestBody List<@Valid ChatSettingDtoApi> dtoList,
+            @Valid @RequestBody ChatSettingsDtoAPI dtoList,
             BindingResult br) {
 
         if (chatId <= 0) {
@@ -221,7 +221,7 @@ public class ChatController {
                     .body("chatId must be a positive number"); // 400
         }
 
-        if (br.hasErrors() || dtoList.isEmpty()) {
+        if (br.hasErrors() || dtoList.getSettings() == null || dtoList.getSettings().isEmpty()) {
             String msg = br.getFieldErrors().stream()
                     .map(e -> e.getField() + " " + e.getDefaultMessage())
                     .findFirst()
@@ -234,19 +234,64 @@ public class ChatController {
                     .body("Chat id " + chatId + " not found");
         }
 
-        dtoList.forEach(d -> {
-            ChatSetting s = chatSettingRepository
-                    .findByChatIdAndName(chatId, d.name())
+        for (ChatSettingsDtoAPI.Setting sDto : dtoList.getSettings()) {
+            ChatSetting setting = chatSettingRepository
+                    .findByChatIdAndSettingKey(chatId, sDto.getSettingKey()) // ✅ FIXED
                     .orElseGet(ChatSetting::new);
 
-            s.setChatId(chatId);
-            s.setName(d.name());
-            s.setValue(d.value());
-            chatSettingRepository.save(s);
-        });
+            setting.setChatId(chatId);
+            setting.setSettingKey(sDto.getSettingKey());
+            setting.setSettingValue(sDto.getSettingValue());
+
+            chatSettingRepository.save(setting);
+        }
+
 
         return ResponseEntity.status(HttpStatus.CREATED)          // 201
                 .body(new ApiResponse("Settings saved"));
+    }
+
+    //update
+    @PutMapping("/{chatId}/settings/{settingKey}")
+    public ResponseEntity<?> updateSetting(
+            @PathVariable Long chatId,
+            @PathVariable String settingKey,
+            @RequestBody Map<String, String> payload) {
+
+        Optional<ChatSetting> optionalSetting = chatSettingRepository.findByChatIdAndSettingKey(chatId, settingKey);
+
+        if (optionalSetting.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse("Setting not found"));
+        }
+
+        String newValue = payload.get("settingValue");
+        if (newValue == null || newValue.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("settingValue is required"));
+        }
+
+        ChatSetting setting = optionalSetting.get();
+        setting.setSettingValue(newValue);
+        chatSettingRepository.save(setting);
+
+        return ResponseEntity.ok(new ApiResponse("Setting updated"));
+    }
+
+    @DeleteMapping("/{chatId}/settings/{settingKey}")
+    public ResponseEntity<?> deleteSetting(
+            @PathVariable Long chatId,
+            @PathVariable String settingKey) {
+
+        Optional<ChatSetting> optionalSetting = chatSettingRepository.findByChatIdAndSettingKey(chatId, settingKey);
+
+        if (optionalSetting.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse("Setting not found"));
+        }
+
+        chatSettingRepository.delete(optionalSetting.get());
+        return ResponseEntity.ok(new ApiResponse("Setting deleted"));
     }
 
     /** Simple response wrapper */

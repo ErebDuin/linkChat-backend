@@ -59,6 +59,7 @@ public class SecurityConfig {
                         .requestMatchers("/ui/admin-login", "/js/**", "/styles/**", "/v3/**").permitAll()
                         .requestMatchers("/api/swagger-ui.html", "/api/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
+
                 )
                 .formLogin(form -> form
                         .loginPage("/ui/admin-login")
