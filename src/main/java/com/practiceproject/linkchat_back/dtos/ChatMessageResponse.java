@@ -26,7 +26,7 @@ public class ChatMessageResponse {
         this.chatId = message.getChat() != null ? message.getChat().getChatId() : null;
 
         if (message.getMessageType() == ChatMessage.MessageType.IMAGE && message.getImageData() != null) {
-            this.imageBase64 = java.util.Base64.getEncoder().encodeToString(message.getImageData());
+            this.imageBase64 = message.getImageData(); // Store the base64 string directly
             this.imageFilename = message.getImageFilename();
             this.imageContentType = message.getImageContentType();
         }

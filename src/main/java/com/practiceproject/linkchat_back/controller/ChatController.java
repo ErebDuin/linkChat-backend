@@ -116,11 +116,13 @@ public class ChatController {
 
     @PostMapping("/{link}/image")
     public ResponseEntity<ApiResponse> sendImageMessage(@PathVariable String link,
-                                                      @RequestBody Map<String, Object> request) {
+                                                        @RequestBody Map<String, Object> request) {
         try {
+            logger.info("Attempting to send image message for chat link: {}", link);
+
             Optional<Chat> chatOpt = chatRepository.findByLink(link);
             if (chatOpt.isEmpty()) {
-                logger.warn("Chat with link {} not found", link);
+                logger.error("Chat with link {} not found when sending image message", link);
                 return ResponseEntity.badRequest()
                         .body(new ApiResponse("Chat not found"));
             }
@@ -131,18 +133,13 @@ public class ChatController {
             String filename = (String) request.get("filename");
             String contentType = (String) request.get("contentType");
 
-            if (sender == null || recipient == null || imageBase64 == null) {
+            // Validate base64 format
+            if (!imageBase64.startsWith("data:image/")) {
+                logger.error("Invalid image format - imageBase64 does not start with 'data:image/', actual start: {}",
+                        imageBase64.length() > 20 ? imageBase64.substring(0, 20) : imageBase64);
                 return ResponseEntity.badRequest()
-                        .body(new ApiResponse("Missing required fields"));
+                        .body(new ApiResponse("Invalid image format"));
             }
-
-            // Clean the base64 string - remove data URL prefix if present
-            if (imageBase64.contains(",")) {
-                imageBase64 = imageBase64.substring(imageBase64.indexOf(",") + 1);
-            }
-
-            // Remove any whitespace or newlines
-            imageBase64 = imageBase64.replaceAll("\\s", "");
 
             Chat chat = chatOpt.get();
             ChatMessage msg = new ChatMessage();
@@ -152,25 +149,19 @@ public class ChatController {
             msg.setTimestamp(java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME));
             msg.setChat(chat);
 
-            // Decode and save binary image data
-            try {
-                byte[] imageData = java.util.Base64.getDecoder().decode(imageBase64);
-                msg.setImageData(imageData);
-                msg.setImageFilename(filename);
-                msg.setImageContentType(contentType);
-                // Set a default message text for image messages to satisfy NOT NULL constraint
-                msg.setMessageText(""); // or you could use "[Image]" or null if you modify the DB
-            } catch (IllegalArgumentException e) {
-                logger.error("Invalid base64 image data: {}", e.getMessage());
-                return ResponseEntity.badRequest()
-                        .body(new ApiResponse("Invalid base64 image data"));
-            }
+            // Store the entire base64 string including data URL prefix as text
+            msg.setImageData(imageBase64);
+            msg.setImageFilename(filename);
+            msg.setImageContentType(contentType);
+            // Set a default message text for image messages to satisfy NOT NULL constraint
+            msg.setMessageText(""); // or you could use "[Image]" or null if you modify the DB
 
-            chatMessageRepository.save(msg);
+            ChatMessage savedMessage = chatMessageRepository.save(msg);
+            logger.info("Successfully saved image message with ID: {} for chat: {}", savedMessage.getMessageId(), chat.getChatId());
 
             return ResponseEntity.ok(new ApiResponse("Image message sent"));
         } catch (Exception e) {
-            logger.error("Error sending image message", e);
+            logger.error("Error sending image message for chat link: {} - Error: {}", link, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Error sending image message: " + e.getMessage()));
         }

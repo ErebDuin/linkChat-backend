@@ -17,9 +17,8 @@ public class ChatMessage {
     @Column(name = "message_type", nullable = false)
     private MessageType messageType = MessageType.TEXT;
 
-    @Lob
-    @Column(name = "image_data")
-    private byte[] imageData;
+    @Column(name = "image_data", columnDefinition = "TEXT")
+    private String imageData;
 
     @Column(name = "image_filename")
     private String imageFilename;
