@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Chat Invitation</title>
+</head>
+<body>
+<h2 th:text="'You are invited to: ' + ${title}">You are invited to a chat</h2>
+<p>Click the link below to join the chat:</p>
+<a th:href="${chatLink}" th:text="${chatLink}">Join Chat</a>
+</body>
+</html>

@@ -1,6 +1,8 @@
 package com.practiceproject.linkchat_back.services;
 
 import com.practiceproject.linkchat_back.dtos.EmailRequest;
+import com.practiceproject.linkchat_back.dtos.SimpleEmailRequest;
+import com.practiceproject.linkchat_back.viewModels.ChatForm;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Map;
@@ -19,6 +24,9 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender emailSender;
+
+    @Autowired
+    private SpringTemplateEngine templateEngine;
 
     public void sendSimpleMessage(String to, String subject, String text) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
@@ -83,5 +91,20 @@ public class EmailService {
 
         emailSender.send(msg);
     }
+    public void sendInviteEmail(SimpleEmailRequest emailRequest, ChatForm form) throws MessagingException {
+        Context context = new Context();
+        context.setVariable("title", form.getTitle());
+        context.setVariable("chatLink", form.getLink());
 
+        String html = templateEngine.process("invite-email-template", context);
+
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        MimeMessageHelper mimeHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        mimeHelper.setFrom("sysportnov@gmail.com");
+        mimeHelper.setTo(form.getInviteEmails().get(0).getEmail());
+        mimeHelper.setSubject("Link Chat Invite");
+        mimeHelper.setText(html, true);
+
+        emailSender.send(mimeMessage);
+    }
 }

@@ -1,11 +1,14 @@
 package com.practiceproject.linkchat_back.viewController;
 
 import com.practiceproject.linkchat_back.dtos.ChatSettingsDto;
+import com.practiceproject.linkchat_back.dtos.SimpleEmailRequest;
 import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.model.InviteEmailEntry;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
 import com.practiceproject.linkchat_back.services.ChatService;
+import com.practiceproject.linkchat_back.services.EmailService;
 import com.practiceproject.linkchat_back.viewModels.ChatForm;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
@@ -46,10 +50,12 @@ public class ChatsManagementController {
 
     private final ChatRepository chatRepository;
     private final ChatService chatService;
+    private final EmailService emailService;
 
-    public ChatsManagementController(ChatRepository chatRepository, ChatService chatService) {
+    public ChatsManagementController(ChatRepository chatRepository, ChatService chatService, EmailService emailService) {
         this.chatRepository = chatRepository;
         this.chatService = chatService;
+        this.emailService = emailService;
     }
 
     /**
@@ -117,6 +123,23 @@ public class ChatsManagementController {
         logger.info("::Adding invite emails: {}", form.getInviteEmails());
         chatService.saveChat(form);
         logger.info("::New chat saved with title: {}", form.getTitle());
+        return "redirect:/ui/chats-management";
+    }
+
+    @PostMapping(value = "/new-chat", params = "save-n-send")
+    public String saveAndSendNewChat(
+            @Valid @ModelAttribute("chat") ChatForm form,
+            BindingResult result,
+            @ModelAttribute("emailRequest") SimpleEmailRequest emailRequest
+    ) throws MessagingException, IOException {
+        if (result.hasErrors()) {
+            logger.warn("::Validation error: {}", result.getAllErrors());
+            return "new-chat";
+        }
+
+        chatService.saveChat(form);
+        emailService.sendInviteEmail(emailRequest, form);
+        logger.info("::New chat saved and invite email sent to: {}", emailRequest.getTo());
         return "redirect:/ui/chats-management";
     }
 
