@@ -245,23 +245,29 @@ public class ChatController {
     }
 
     //update
-    @PutMapping("/{chatId}/settings/{settingKey}")
+    @PutMapping("/{chatId}/settings")
     public ResponseEntity<?> updateSetting(
             @PathVariable Long chatId,
-            @PathVariable String settingKey,
             @RequestBody Map<String, String> payload) {
+
+        String settingKey = payload.get("settingKey");
+        String newValue = payload.get("settingValue");
+
+        if (settingKey == null || settingKey.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("settingKey is required"));
+        }
+
+        if (newValue == null || newValue.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("settingValue is required"));
+        }
 
         Optional<ChatSetting> optionalSetting = chatSettingRepository.findByChatIdAndSettingKey(chatId, settingKey);
 
         if (optionalSetting.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse("Setting not found"));
-        }
-
-        String newValue = payload.get("settingValue");
-        if (newValue == null || newValue.trim().isEmpty()) {
-            return ResponseEntity.badRequest()
-                    .body(new ApiResponse("settingValue is required"));
         }
 
         ChatSetting setting = optionalSetting.get();
