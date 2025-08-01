@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +26,7 @@ import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.model.ChatMessage;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -283,6 +285,69 @@ public class ChatController {
 
         chatSettingRepository.delete(optionalSetting.get());
         return ResponseEntity.ok(new ApiResponse("Setting deleted"));
+    }
+    @GetMapping("/{link}/image/{messageId}")
+    public ResponseEntity<?> getImage(@PathVariable String link, @PathVariable Long messageId) {
+        try {
+            logger.info("Retrieving image for message ID: {} in chat: {}", messageId, link);
+
+            // Verify chat exists
+            Optional<Chat> chatOpt = chatRepository.findByLink(link);
+            if (chatOpt.isEmpty()) {
+                logger.error("Chat with link {} not found", link);
+                return ResponseEntity.notFound().build();
+            }
+
+            // Find the message
+            Optional<ChatMessage> messageOpt = chatMessageRepository.findById(messageId);
+            if (messageOpt.isEmpty()) {
+                logger.error("Message with ID {} not found", messageId);
+                return ResponseEntity.notFound().build();
+            }
+
+            ChatMessage message = messageOpt.get();
+
+            // Verify message belongs to the chat
+            if (!message.getChat().getChatId().equals(chatOpt.get().getChatId())) {
+                logger.error("Message {} does not belong to chat {}", messageId, link);
+                return ResponseEntity.notFound().build();
+            }
+
+            // Verify it's an image message
+            if (message.getMessageType() != ChatMessage.MessageType.IMAGE || message.getImageData() == null) {
+                logger.error("Message {} is not an image or has no image data", messageId);
+                return ResponseEntity.notFound().build();
+            }
+
+            // Extract base64 data (remove data:image/type;base64, prefix)
+            String imageBase64 = message.getImageData();
+            String base64Data;
+            if (imageBase64.contains(",")) {
+                base64Data = imageBase64.substring(imageBase64.indexOf(",") + 1);
+            } else {
+                base64Data = imageBase64;
+            }
+
+            // Decode base64 to bytes
+            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+
+            // Set content type
+            String contentType = message.getImageContentType();
+            if (contentType == null) {
+                contentType = "image/jpeg"; // default fallback
+            }
+
+            logger.info("Successfully retrieved image for message ID: {}, size: {} bytes", messageId, imageBytes.length);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(imageBytes);
+
+        } catch (Exception e) {
+            logger.error("Error retrieving image for message ID: {} in chat: {} - Error: {}", messageId, link, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("Error retrieving image: " + e.getMessage()));
+        }
     }
 
     /** Simple response wrapper */
