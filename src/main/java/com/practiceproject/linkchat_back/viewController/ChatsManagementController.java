@@ -96,12 +96,12 @@ public class ChatsManagementController {
     }
 
     /**
-     * Handles the form submission for adding a new chat.
-     * Validates input and saves the new chat to the database.
+     * Handles the form submission when the "Generate" button is clicked.
+     * Generates a random chat link and adds it to the form.
      *
-     * @param form  ChatForm containing the new chat data
-     * @param model Model to pass attributes to the view
-     * @return View name for rendering
+     * @param form ChatForm containing current user input
+     * @param redirectAttributes RedirectAttributes to persist the form across redirect
+     * @return Redirects back to the new chat form view with updated form data
      */
 
     @PostMapping(value = "/new-chat", params = "generate")
@@ -152,25 +152,25 @@ public class ChatsManagementController {
      */
 
     @GetMapping("/chat-settings")
-    public String showChatSettings(@RequestParam("id") Long id, Model model) {
+    public String showChatSettings(@RequestParam("id") Long chatId, Model model) {
         try {
-            if (id == null) {
-                model.addAttribute("errorMessage", "Chat ID is required.");
-                return "chat-settings";
-            }
-            chatRepository.findById(id).ifPresentOrElse(chat -> {
-                ChatSettingsDto dto = new ChatSettingsDto();
-                dto.setId(chat.getChatId());
-                dto.setTitle(chat.getTitle());
-                dto.setLink(chat.getLink());
-                dto.setType(chat.getType());
-                dto.setActive(chat.isActive());
-                model.addAttribute("chatSettingsDto", dto);
-            }, () -> model.addAttribute("errorMessage", "Chat not found."));
-        } catch (DataAccessException ex) {
-            model.addAttribute("errorMessage", "Database error.");
+            Chat chat = chatRepository.findById(chatId)
+                    .orElseThrow(() -> new IllegalArgumentException("Chat not found with ID: " + chatId));
+
+            ChatSettingsDto dto = new ChatSettingsDto();
+            dto.setId(chat.getChatId());
+            dto.setTitle(chat.getTitle());
+            dto.setLink(chat.getLink());
+            dto.setType(chat.getType());
+            dto.setActive(chat.isActive());
+
+            model.addAttribute("chatSettingsDto", dto);
+            return "chat-settings";
+        } catch (Exception ex) {
+            logger.error("::Failed to load chat settings", ex);
+            model.addAttribute("errorMessage", "A system error occurred. Please try again later or contact support.");
+            return "maintenance";
         }
-        return "chat-settings";
     }
 
     /**
@@ -178,73 +178,51 @@ public class ChatsManagementController {
      * Validates input and updates the chat in the database.
      *
      * @param chatSettingsDto DTO containing user data
-     * @param br              BindingResult for validation errors
+     * @param result              BindingResult for validation errors
      * @param model           Model to pass attributes to the view
      * @return View name for rendering
      */
 
     @PostMapping("/chat-settings/save")
-    public String editChat(@ModelAttribute("chatSettingsDto") ChatSettingsDto chatSettingsDto,
-                           BindingResult br, Model model,
-                           RedirectAttributes redirectAttributes) {
-        try {
-            if (br.hasErrors()) {
-                model.addAttribute("chatSettingsDto", chatSettingsDto);
-                return "chat-settings";
-            }
+    public String editChatSettings(@Valid @ModelAttribute("chatSettingsDto") ChatSettingsDto chatSettingsDto,
+                                   BindingResult result,
+                                   Model model) {
+        if (result.hasErrors()) {
+            logger.warn("::Validation errors in chat settings: {}", result.getAllErrors());
+            return "chat-settings";
+        }
 
-            if (chatSettingsDto == null ||
-                    chatSettingsDto.getId() == null ||
-                    chatSettingsDto.getTitle() == null || chatSettingsDto.getTitle().isBlank()) {
-                model.addAttribute("errorMessage", "Name is required.");
-                model.addAttribute("chatSettingsDto", chatSettingsDto);
-                return "chat-settings";
-            }
-            chatRepository.findById(chatSettingsDto.getId()).ifPresentOrElse(chat -> {
-                chat.setTitle(chatSettingsDto.getTitle());
-                chat.setType(chatSettingsDto.getType());
-                chat.setActive(chatSettingsDto.isActive());
-                chatRepository.save(chat);
-            }, () -> {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Chat not found");
-            });
-            redirectAttributes.addFlashAttribute("successMessage", "Chat updated successfully!");
+        try {
+            chatService.updateChatSettings(chatSettingsDto);
+            logger.info("::Chat settings updated for Chat ID: {}", chatSettingsDto.getId());
             return "redirect:/ui/chats-management";
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Error updating chat: " + e.getMessage());
+        } catch (Exception ex) {
+            logger.error("::Failed to update chat settings", ex);
+            model.addAttribute("errorMessage", "A system error occurred while saving settings. Please try again.");
             return "chat-settings";
         }
     }
 
-    @PostMapping("/chat-settings/delete")
-    public String deleteChat(@ModelAttribute("chatSettingsDto") ChatSettingsDto chatSettingsDto,
-                             BindingResult br, Model model,
-                             RedirectAttributes redirectAttributes) {
+     /**
+     * Handles the deletion of a chat by its ID.
+     * On success, redirects to the chats management page.
+     * On failure, logs the error, sets an error message, and returns to the chat settings page.
+     *
+     * @param chatId The ID of the chat to delete (from request parameter)
+     * @param model  Model to pass attributes to the view
+     * @return Redirect or view name
+     */
+
+      @PostMapping("/chat-settings/delete")
+      public String deleteChat(@RequestParam("id") Long chatId, Model model) {
         try {
-            System.out.println("Deleting chat with ID: " + chatSettingsDto.getId());
-            if (br.hasErrors()) {
-                model.addAttribute("chatSettingsDto", chatSettingsDto);
-                return "chat-settings";
-            }
-
-            if (chatSettingsDto == null ||
-                    chatSettingsDto.getId() == null ) {
-                model.addAttribute("errorMessage", "Name is required.");
-                model.addAttribute("chatSettingsDto", chatSettingsDto);
-                return "chat-settings";
-            }
-            chatRepository.findById(chatSettingsDto.getId()).ifPresentOrElse(chat -> {
-                chatRepository.delete(chat);
-            },
-
-                    () -> {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Chat not found");
-            });
-            redirectAttributes.addFlashAttribute("successMessage", "Chat deleted successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting chat: " + e.getMessage());
-        }
+        chatService.deleteChatById(chatId);
+        logger.info("::Chat deleted with ID: {}", chatId);
         return "redirect:/ui/chats-management";
-    }
-
+         } catch (Exception ex) {
+        logger.error("::Failed to delete chat with ID: {}", chatId, ex);
+        model.addAttribute("errorMessage", "A system error occurred while deleting the chat.");
+        return "chat-settings";
+      }
+   }
 }
