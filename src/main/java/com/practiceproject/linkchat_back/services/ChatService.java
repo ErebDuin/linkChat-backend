@@ -1,6 +1,7 @@
 package com.practiceproject.linkchat_back.services;
 
 
+import com.practiceproject.linkchat_back.dtos.ChatSettingsDto;
 import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.model.InviteEmailEntry;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
@@ -61,5 +62,24 @@ public class ChatService {
         chat.setActive(form.isActive());
         chat.setInviteEmails(new ArrayList<>(form.getInviteEmails()));
         chatRepository.save(chat);
+    }
+
+    public void updateChatSettings(ChatSettingsDto dto) {
+        Chat chat = chatRepository.findById(dto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Chat not found with ID: " + dto.getId()));
+
+        chat.setTitle(dto.getTitle());
+        chat.setLink(dto.getLink());
+        chat.setType(dto.getType());
+        chat.setActive(dto.isActive());
+
+        chatRepository.save(chat);
+    }
+
+    public void deleteChatById(Long id) {
+        if (!chatRepository.existsById(id)) {
+            throw new IllegalArgumentException("Chat not found with ID: " + id);
+        }
+        chatRepository.deleteById(id);
     }
 }
