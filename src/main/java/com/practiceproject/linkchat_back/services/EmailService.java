@@ -2,9 +2,12 @@ package com.practiceproject.linkchat_back.services;
 
 import com.practiceproject.linkchat_back.dtos.EmailRequest;
 import com.practiceproject.linkchat_back.dtos.SimpleEmailRequest;
+import com.practiceproject.linkchat_back.model.InviteEmailEntry;
 import com.practiceproject.linkchat_back.viewModels.ChatForm;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
@@ -91,20 +94,42 @@ public class EmailService {
 
         emailSender.send(msg);
     }
-    public void sendInviteEmail(SimpleEmailRequest emailRequest, ChatForm form) throws MessagingException {
+    public void sendInviteEmail(SimpleEmailRequest emailRequest, ChatForm form) throws MessagingException, IOException {
         Context context = new Context();
+        String baseUrl = "https://fs-dev.portnov.com";
         context.setVariable("title", form.getTitle());
-        context.setVariable("chatLink", form.getLink());
+        context.setVariable("chatLink", baseUrl + form.getLink());
 
         String html = templateEngine.process("invite-email-template", context);
+        String[] recipients = form.getInviteEmails().stream()
+                .map(InviteEmailEntry::getEmail)
+                .toArray(String[]::new);
 
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         MimeMessageHelper mimeHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
         mimeHelper.setFrom("sysportnov@gmail.com");
-        mimeHelper.setTo(form.getInviteEmails().get(0).getEmail());
+        mimeHelper.setTo(recipients);
         mimeHelper.setSubject("Link Chat Invite");
         mimeHelper.setText(html, true);
 
+        MimeMultipart multipart = getMimeMultipart(html);
+
+        mimeMessage.setContent(multipart);
         emailSender.send(mimeMessage);
+    }
+
+    private static MimeMultipart getMimeMultipart(String html) throws MessagingException, IOException {
+        MimeBodyPart htmlPart = new MimeBodyPart();
+        htmlPart.setContent(html, "text/html; charset=UTF-8");
+
+        MimeBodyPart imagePart = new MimeBodyPart();
+        imagePart.attachFile(new ClassPathResource("static/images/linkchat-logo-150x150.png").getFile());
+        imagePart.setContentID("<linkchatLogo>");
+        imagePart.setDisposition(MimeBodyPart.INLINE);
+
+        MimeMultipart multipart = new MimeMultipart("related");
+        multipart.addBodyPart(htmlPart);
+        multipart.addBodyPart(imagePart);
+        return multipart;
     }
 }

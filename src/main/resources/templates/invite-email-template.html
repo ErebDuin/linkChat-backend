@@ -2,11 +2,79 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${title}">Chat Invitation</title>
+    <style>
+        body {
+          font-family: Roboto, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #F7F9FC;
+          color: #333;
+        }
+
+        .email-container {
+          max-width: 600px;
+          margin: 0 auto;
+          background: #fff;
+          border-radius: 8px;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+          padding: 30px;
+          text-align: center;
+        }
+
+        .logo-container {
+          margin-bottom: 25px;
+        }
+
+        .logo-container img {
+          max-width: 160px;
+        }
+
+        h2 {
+          color: #3A55B7;
+          font-size: 20px;
+        }
+
+        p {
+          font-size: 16px;
+          line-height: 1.6;
+        }
+
+        .join-button {
+          display: inline-block;
+          margin-top: 20px;
+          padding: 10px 20px;
+          background-color: #3A55B7;
+          color: #fff;
+          text-decoration: none;
+          border-radius: 4px;
+          font-size: 16px;
+        }
+
+        .footer {
+          margin-top: 40px;
+          font-size: 12px;
+          color: #888;
+        }
+    </style>
 </head>
 <body>
-<h2 th:text="'You are invited to: ' + ${title}">You are invited to a chat</h2>
-<p>Click the link below to join the chat:</p>
-<a th:href="${chatLink}" th:text="${chatLink}">Join Chat</a>
+<div class="email-container">
+    <div class="logo-container">
+        <img src="cid:linkchatLogo" alt="LinkChat Logo"/>
+    </div>
+
+    <h2 th:text="'You are invited to: ' + ${title}">You are invited to a chat</h2>
+    <p>Click the link below to join the chat:</p>
+
+    <a class="join-button" th:href="${chatLink}" th:text="'Join ' + ${title}">Join Chat</a>
+
+    <div class="footer">
+        <p>This invitation was sent via LinkChat. If you did not expect this, please ignore.</p>
+        <p>Your Company · support@linkchat.com</p>
+    </div>
+</div>
 </body>
 </html>
