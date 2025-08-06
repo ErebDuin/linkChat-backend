@@ -13,7 +13,6 @@ import jakarta.validation.constraints.Positive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
@@ -200,9 +199,6 @@ public class ChatController {
         return ResponseEntity.badRequest().body("Invalid parameter: " + ex.getName());
     }
 
-
-
-
     @PostMapping("/{chatId}/settings")
     public ResponseEntity<?> upsertSettings(
             @PathVariable @Positive Long chatId,
@@ -229,7 +225,7 @@ public class ChatController {
 
         for (ChatSettingsDtoAPI.Setting sDto : dtoList.getSettings()) {
             ChatSetting setting = chatSettingRepository
-                    .findByChatIdAndSettingKey(chatId, sDto.getSettingKey()) // ✅ FIXED
+                    .findByChatIdAndSettingKey(chatId, sDto.getSettingKey())
                     .orElseGet(ChatSetting::new);
 
             setting.setChatId(chatId);
