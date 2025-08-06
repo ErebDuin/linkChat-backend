@@ -9,10 +9,12 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -30,6 +32,15 @@ public class EmailService {
 
     @Autowired
     private SpringTemplateEngine templateEngine;
+
+    @Value("${app.base-url}")
+    private String baseUrl;
+
+    @Value("${app.from-email}")
+    private String fromEmail;
+
+    @Value("${app.emailSubject}")
+    private String emailSubject;
 
     public void sendSimpleMessage(String to, String subject, String text) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
@@ -94,28 +105,35 @@ public class EmailService {
 
         emailSender.send(msg);
     }
+    @Async
     public void sendInviteEmail(SimpleEmailRequest emailRequest, ChatForm form) throws MessagingException, IOException {
-        Context context = new Context();
-        String baseUrl = "https://fs-dev.portnov.com";
-        context.setVariable("title", form.getTitle());
-        context.setVariable("chatLink", baseUrl + form.getLink());
+        try {
+            Context context = new Context();
+            baseUrl = this.baseUrl;
+            fromEmail = this.fromEmail;
+            emailSubject = this.emailSubject;
+            context.setVariable("title", form.getTitle());
+            context.setVariable("chatLink", baseUrl + form.getLink());
 
-        String html = templateEngine.process("invite-email-template", context);
-        String[] recipients = form.getInviteEmails().stream()
-                .map(InviteEmailEntry::getEmail)
-                .toArray(String[]::new);
+            String html = templateEngine.process("invite-email-template", context);
+            String[] recipients = form.getInviteEmails().stream()
+                    .map(InviteEmailEntry::getEmail)
+                    .toArray(String[]::new);
 
-        MimeMessage mimeMessage = emailSender.createMimeMessage();
-        MimeMessageHelper mimeHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-        mimeHelper.setFrom("sysportnov@gmail.com");
-        mimeHelper.setTo(recipients);
-        mimeHelper.setSubject("Link Chat Invite");
-        mimeHelper.setText(html, true);
+            MimeMessage mimeMessage = emailSender.createMimeMessage();
+            MimeMessageHelper mimeHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            mimeHelper.setFrom(fromEmail);
+            mimeHelper.setTo(recipients);
+            mimeHelper.setSubject(emailSubject);
+            mimeHelper.setText(html, true);
 
-        MimeMultipart multipart = getMimeMultipart(html);
+            MimeMultipart multipart = getMimeMultipart(html);
+            mimeMessage.setContent(multipart);
 
-        mimeMessage.setContent(multipart);
-        emailSender.send(mimeMessage);
+            emailSender.send(mimeMessage);
+        } catch (Exception e) {
+            System.err.println("::Failed to send invite emails: " + e.getMessage());
+        }
     }
 
     private static MimeMultipart getMimeMultipart(String html) throws MessagingException, IOException {

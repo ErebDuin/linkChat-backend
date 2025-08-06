@@ -137,6 +137,8 @@ public class ChatsManagementController {
             return "new-chat";
         }
 
+        chatService.addInviteEmail(form, null);
+        logger.info("::Adding invite emails and to send invite email: {}", form.getInviteEmails());
         chatService.saveChat(form);
         emailService.sendInviteEmail(emailRequest, form);
         logger.info("::New chat saved and invite email sent to: {}", emailRequest.getTo());
