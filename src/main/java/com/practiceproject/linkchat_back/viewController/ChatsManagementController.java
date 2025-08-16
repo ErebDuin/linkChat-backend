@@ -3,30 +3,21 @@ package com.practiceproject.linkchat_back.viewController;
 import com.practiceproject.linkchat_back.dtos.ChatSettingsDto;
 import com.practiceproject.linkchat_back.dtos.SimpleEmailRequest;
 import com.practiceproject.linkchat_back.model.Chat;
-import com.practiceproject.linkchat_back.model.InviteEmailEntry;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
 import com.practiceproject.linkchat_back.services.ChatService;
-import com.practiceproject.linkchat_back.services.EmailService;
+import com.practiceproject.linkchat_back.producer.InviteEmailProducer;
 import com.practiceproject.linkchat_back.viewModels.ChatForm;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.List;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 /**
  * Controller for chats management operations.
@@ -50,12 +41,13 @@ public class ChatsManagementController {
 
     private final ChatRepository chatRepository;
     private final ChatService chatService;
-    private final EmailService emailService;
+    private final InviteEmailProducer rabbitService;
 
-    public ChatsManagementController(ChatRepository chatRepository, ChatService chatService, EmailService emailService) {
+    public ChatsManagementController(ChatRepository chatRepository, ChatService chatService, InviteEmailProducer rabbitService) {
         this.chatRepository = chatRepository;
         this.chatService = chatService;
-        this.emailService = emailService;
+        this.rabbitService = rabbitService;
+
     }
 
     /**
@@ -131,7 +123,7 @@ public class ChatsManagementController {
             @Valid @ModelAttribute("chat") ChatForm form,
             BindingResult result,
             @ModelAttribute("emailRequest") SimpleEmailRequest emailRequest
-    ) throws MessagingException, IOException {
+    ) throws Exception {
         if (result.hasErrors()) {
             logger.warn("::Validation error: {}", result.getAllErrors());
             return "new-chat";
@@ -140,7 +132,7 @@ public class ChatsManagementController {
         chatService.addInviteEmail(form, null);
         logger.info("::Adding invite emails and to send invite email: {}", form.getInviteEmails());
         chatService.saveChat(form);
-        emailService.sendInviteEmail(emailRequest, form);
+        rabbitService.start(form);
         logger.info("::New chat saved and invite email sent to: {}", emailRequest.getTo());
         return "redirect:/ui/chats-management";
     }
