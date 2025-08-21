@@ -12,23 +12,31 @@ public class ChatMessageResponse {
     private String timestamp;
     private String sender;
     private String recipient;
-    private Long chatId;
+    private ChatSummaryDto chat;
 
     public ChatMessageResponse() {}
 
     public ChatMessageResponse(ChatMessage message) {
         this.messageId = message.getMessageId();
         this.messageText = message.getMessageText();
-        this.messageType = message.getMessageType().name();
+        this.messageType = (message.getMessageType() != null) ? message.getMessageType().name() : "TEXT";
         this.timestamp = message.getTimestamp();
         this.sender = message.getSender();
         this.recipient = message.getRecipient();
-        this.chatId = message.getChat() != null ? message.getChat().getChatId() : null;
+
+
+        if (message.getChat() != null) {
+            this.chat = new ChatSummaryDto(message.getChat());
+        }
 
         if (message.getMessageType() == ChatMessage.MessageType.IMAGE && message.getImageData() != null) {
             this.imageBase64 = message.getImageData(); // Store the base64 string directly
             this.imageFilename = message.getImageFilename();
             this.imageContentType = message.getImageContentType();
+        } else {
+            this.imageBase64 = null;
+            this.imageFilename = null;
+            this.imageContentType = null;
         }
     }
 
@@ -60,6 +68,10 @@ public class ChatMessageResponse {
     public String getRecipient() { return recipient; }
     public void setRecipient(String recipient) { this.recipient = recipient; }
 
-    public Long getChatId() { return chatId; }
-    public void setChatId(Long chatId) { this.chatId = chatId; }
+    public ChatSummaryDto getChat() {return chat;}
+
+    public void setChat(ChatSummaryDto chat) {this.chat = chat;}
+
+//    public Long getChatId() { return chatId; }
+//    public void setChatId(Long chatId) { this.chatId = chatId; }
 }

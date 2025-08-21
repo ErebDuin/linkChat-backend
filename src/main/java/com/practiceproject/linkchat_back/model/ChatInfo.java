@@ -1,17 +1,20 @@
 package com.practiceproject.linkchat_back.model;
+import com.practiceproject.linkchat_back.dtos.ChatMessageResponse;
 import com.practiceproject.linkchat_back.repository.ChatMessageRepository;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
 import com.practiceproject.linkchat_back.repository.ChatUserRepository;
 import com.practiceproject.linkchat_back.model.Chat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ChatInfo {
     private String title;
     private String link;
-    private List<User> users;
-    private List<ChatMessage> messages;
+    private List<String> users;
+    private List<ChatMessageResponse> messages;
 
     public ChatInfo(String title, String link) {
         this.title = title;
@@ -30,11 +33,18 @@ public class ChatInfo {
                     long chatId = chat.getChatId();
                     this.title = chat.getTitle();
                     this.link = chat.getLink();
-                    this.users = chatUserRepository.getChatUsers(chatId);
 
-                    // Try to get messages with error handling
+                    if (chat.getUsers() != null && !chat.getUsers().isEmpty()) {
+                        this.users = Arrays.asList(chat.getUsers().split("\\s*,\\s*"));
+                    } else {
+                        this.users = new ArrayList<>();
+                    }
+
                     try {
-                        this.messages = messageRepository.getMessagesByChatId(chatId);
+                        this.messages = messageRepository.getMessagesByChatId(chatId)
+                                .stream()
+                                .map(ChatMessageResponse::new)
+                                .collect(Collectors.toList());
                     } catch (Exception e) {
                         // Fallback to empty list if there's an issue
                         System.err.println("Error fetching messages for chat " + chatId + ": " + e.getMessage());
@@ -71,19 +81,19 @@ public class ChatInfo {
         this.link = link;
     }
 
-    public List<User> getUsers() {
+    public List<String> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(List<String> users) {
         this.users = users;
     }
 
-    public List<ChatMessage> getMessages() {
+    public List<ChatMessageResponse> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<ChatMessage> messages) {
+    public void setMessages(List<ChatMessageResponse> messages) {
         this.messages = messages;
     }
 }
