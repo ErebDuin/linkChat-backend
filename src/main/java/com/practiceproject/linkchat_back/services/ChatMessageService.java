@@ -1,9 +1,11 @@
 package com.practiceproject.linkchat_back.services;
 
+import com.practiceproject.linkchat_back.dtos.ChatMessageRequest;
 import com.practiceproject.linkchat_back.dtos.ChatMessageResponse;
 import com.practiceproject.linkchat_back.dtos.ImageMessageRequest;
 import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.model.ChatMessage;
+import com.practiceproject.linkchat_back.producer.ChatMessageProducer;
 import com.practiceproject.linkchat_back.repository.ChatMessageRepository;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +25,28 @@ public class ChatMessageService {
     @Autowired
     private ChatRepository chatRepository;
 
-    public ChatMessage sendTextMessage(String sender, String recipient, Long chatId, String messageText) {
+    @Autowired
+    private ChatMessageProducer messageProducer;
+
+    public ChatMessage sendTextMessage(ChatMessageRequest request) {
         ChatMessage message = new ChatMessage();
-        message.setSender(sender);
-        message.setRecipient(recipient);
-        message.setMessageText(messageText);
+        Chat chat = chatRepository.findById(request.getChatId()).orElse(null);
+        message.setChat(chat);
+        message.setSender(request.getSender());
+        message.setRecipient(request.getRecipient());
+        message.setMessageText(request.getMessageText());
         message.setMessageType(ChatMessage.MessageType.TEXT);
         message.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
-        if (chatId != null) {
-            Chat chat = chatRepository.findById(chatId).orElse(null);
-            message.setChat(chat);
+        ChatMessage saved = chatMessageRepository.save(message);
+
+        try {
+            messageProducer.start(saved);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return chatMessageRepository.save(message);
+        return saved;
     }
 
     public ChatMessage sendImageMessage(ImageMessageRequest request) {
