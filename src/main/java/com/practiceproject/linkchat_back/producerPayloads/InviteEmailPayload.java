@@ -1,4 +1,4 @@
-package com.practiceproject.linkchat_back.dtos;
+package com.practiceproject.linkchat_back.producerPayloads;
 
 import java.io.Serializable;
 import java.util.List;

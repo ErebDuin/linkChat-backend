@@ -1,5 +1,6 @@
 package com.practiceproject.linkchat_back.controller;
 
+import com.practiceproject.linkchat_back.dtos.ChatMessageRequest;
 import com.practiceproject.linkchat_back.dtos.ChatMessageResponse;
 import com.practiceproject.linkchat_back.dtos.ImageMessageRequest;
 import com.practiceproject.linkchat_back.model.ChatMessage;
@@ -25,20 +26,10 @@ public class ChatMessageApiController {
     private ChatMessageService chatMessageService;
 
     @PostMapping("/text")
-    public ResponseEntity<ChatMessageResponse> sendTextMessage(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<ChatMessageResponse> sendTextMessage(@RequestBody ChatMessageRequest request) {
         try {
-            String sender = (String) request.get("sender");
-            String recipient = (String) request.get("recipient");
-            String messageText = (String) request.get("messageText");
-            Long chatId = request.get("chatId") != null ?
-                Long.valueOf(request.get("chatId").toString()) : null;
-
-            if (sender == null || recipient == null || messageText == null) {
-                return ResponseEntity.badRequest().build();
-            }
-
-            ChatMessage message = chatMessageService.sendTextMessage(sender, recipient, chatId, messageText);
-            return ResponseEntity.ok(new ChatMessageResponse(message));
+            ChatMessage saved = chatMessageService.sendTextMessage(request);
+            return ResponseEntity.ok(ChatMessageResponse.from(saved));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

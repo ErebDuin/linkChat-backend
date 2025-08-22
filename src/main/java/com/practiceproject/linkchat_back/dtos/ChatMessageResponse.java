@@ -40,6 +40,18 @@ public class ChatMessageResponse {
         }
     }
 
+    public static ChatMessageResponse from(ChatMessage message) {
+        ChatMessageResponse response = new ChatMessageResponse();
+        response.setMessageId(message.getMessageId());
+        response.setChat(new ChatSummaryDto(message.getChat()));
+        response.setSender(message.getSender());
+        response.setRecipient(message.getRecipient());
+        response.setMessageType(message.getMessageType().name());
+        response.setMessageText(message.getMessageText());
+        response.setTimestamp(message.getTimestamp());
+        return response;
+    }
+
     // Getters and setters
     public Long getMessageId() { return messageId; }
     public void setMessageId(Long messageId) { this.messageId = messageId; }
