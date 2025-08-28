@@ -6,10 +6,15 @@ import com.practiceproject.linkchat_back.dtos.ImageMessageRequest;
 import com.practiceproject.linkchat_back.model.Chat;
 import com.practiceproject.linkchat_back.model.ChatMessage;
 import com.practiceproject.linkchat_back.producer.ChatMessageProducer;
+import com.practiceproject.linkchat_back.producerPayloads.ChatMessagePayload;
 import com.practiceproject.linkchat_back.repository.ChatMessageRepository;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,25 +33,16 @@ public class ChatMessageService {
     @Autowired
     private ChatMessageProducer messageProducer;
 
-    public ChatMessage sendTextMessage(ChatMessageRequest request) {
-        ChatMessage message = new ChatMessage();
-        Chat chat = chatRepository.findById(request.getChatId()).orElse(null);
-        message.setChat(chat);
-        message.setSender(request.getSender());
-        message.setRecipient(request.getRecipient());
-        message.setMessageText(request.getMessageText());
-        message.setMessageType(ChatMessage.MessageType.TEXT);
-        message.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    public void sendMessage(ChatMessage chatMessage) throws Exception {
 
-        ChatMessage saved = chatMessageRepository.save(message);
+        ChatMessagePayload payload = new ChatMessagePayload();
+        payload.setSender(chatMessage.getSender());
+        payload.setRecipient(chatMessage.getRecipient());
+        payload.setMessageType(chatMessage.getMessageType().toString());
+        payload.setMessageText(chatMessage.getMessageText());
+        payload.setTimestamp(LocalDateTime.now().toString());
 
-        try {
-            messageProducer.start(saved);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return saved;
+        messageProducer.send(payload);
     }
 
     public ChatMessage sendImageMessage(ImageMessageRequest request) {

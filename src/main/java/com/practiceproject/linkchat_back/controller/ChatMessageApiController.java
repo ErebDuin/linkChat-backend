@@ -4,10 +4,12 @@ import com.practiceproject.linkchat_back.dtos.ChatMessageRequest;
 import com.practiceproject.linkchat_back.dtos.ChatMessageResponse;
 import com.practiceproject.linkchat_back.dtos.ImageMessageRequest;
 import com.practiceproject.linkchat_back.model.ChatMessage;
+import com.practiceproject.linkchat_back.producer.ChatMessageProducer;
 import com.practiceproject.linkchat_back.services.ChatMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +27,19 @@ public class ChatMessageApiController {
     @Autowired
     private ChatMessageService chatMessageService;
 
+    @Autowired
+    private ChatMessageProducer chatMessageProducer;
+
     @PostMapping("/text")
-    public ResponseEntity<ChatMessageResponse> sendTextMessage(@RequestBody ChatMessageRequest request) {
+    public ResponseEntity<String> sendTextMessage(
+            @RequestBody ChatMessage chatMessage,
+            Authentication authentication) {
         try {
-            ChatMessage saved = chatMessageService.sendTextMessage(request);
-            return ResponseEntity.ok(ChatMessageResponse.from(saved));
+            chatMessageService.sendMessage(chatMessage);
+            return ResponseEntity.ok("Message cued successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to queue message: " + e.getMessage());
         }
     }
 

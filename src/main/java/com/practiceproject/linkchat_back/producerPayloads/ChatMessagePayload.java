@@ -59,11 +59,11 @@ public class ChatMessagePayload {
         this.messageText = messageText;
     }
 
-    public String getCreatedAt() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setCreatedAt(String timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 }
