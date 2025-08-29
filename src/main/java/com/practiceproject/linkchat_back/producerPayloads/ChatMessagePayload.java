@@ -1,5 +1,7 @@
 package com.practiceproject.linkchat_back.producerPayloads;
 
+import com.practiceproject.linkchat_back.model.Chat;
+
 public class ChatMessagePayload {
     private Long chatId;
     private String sender;

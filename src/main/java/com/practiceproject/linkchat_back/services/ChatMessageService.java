@@ -1,6 +1,5 @@
 package com.practiceproject.linkchat_back.services;
 
-import com.practiceproject.linkchat_back.dtos.ChatMessageRequest;
 import com.practiceproject.linkchat_back.dtos.ChatMessageResponse;
 import com.practiceproject.linkchat_back.dtos.ImageMessageRequest;
 import com.practiceproject.linkchat_back.model.Chat;
@@ -10,11 +9,7 @@ import com.practiceproject.linkchat_back.producerPayloads.ChatMessagePayload;
 import com.practiceproject.linkchat_back.repository.ChatMessageRepository;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,16 +28,19 @@ public class ChatMessageService {
     @Autowired
     private ChatMessageProducer messageProducer;
 
-    public void sendMessage(ChatMessage chatMessage) throws Exception {
+    public void sendMessage(ChatMessagePayload payload) throws Exception {
+        Chat chat = chatRepository.findById(payload.getChatId())
+                .orElseThrow(() -> new RuntimeException("Chat not found with id: " + payload.getChatId()));
 
-        ChatMessagePayload payload = new ChatMessagePayload();
-        payload.setSender(chatMessage.getSender());
-        payload.setRecipient(chatMessage.getRecipient());
-        payload.setMessageType(chatMessage.getMessageType().toString());
-        payload.setMessageText(chatMessage.getMessageText());
-        payload.setTimestamp(LocalDateTime.now().toString());
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setChat(chat);
+        chatMessage.setSender(payload.getSender());
+        chatMessage.setRecipient(payload.getRecipient());
+        chatMessage.setMessageType(ChatMessage.MessageType.valueOf(payload.getMessageType()));
+        chatMessage.setMessageText(payload.getMessageText());
+        chatMessage.setTimestamp(LocalDateTime.now().toString());
 
-        messageProducer.send(payload);
+        chatMessageRepository.save(chatMessage);
     }
 
     public ChatMessage sendImageMessage(ImageMessageRequest request) {
@@ -65,7 +63,7 @@ public class ChatMessageService {
         return chatMessageRepository.save(message);
     }
 
-    public List<ChatMessageResponse> getMessagesByChatId(Long chatId) {
+    public List<ChatMessageResponse> getMessagesByChatId(Chat chatId) {
         List<ChatMessage> messages = chatMessageRepository.getMessagesByChatId(chatId);
         return messages.stream()
                 .map(ChatMessageResponse::new)

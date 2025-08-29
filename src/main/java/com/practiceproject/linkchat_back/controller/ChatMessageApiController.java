@@ -1,21 +1,17 @@
 package com.practiceproject.linkchat_back.controller;
 
-import com.practiceproject.linkchat_back.dtos.ChatMessageRequest;
 import com.practiceproject.linkchat_back.dtos.ChatMessageResponse;
 import com.practiceproject.linkchat_back.dtos.ImageMessageRequest;
 import com.practiceproject.linkchat_back.model.ChatMessage;
 import com.practiceproject.linkchat_back.producer.ChatMessageProducer;
+import com.practiceproject.linkchat_back.producerPayloads.ChatMessagePayload;
 import com.practiceproject.linkchat_back.services.ChatMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/messages")
@@ -32,10 +28,9 @@ public class ChatMessageApiController {
 
     @PostMapping("/text")
     public ResponseEntity<String> sendTextMessage(
-            @RequestBody ChatMessage chatMessage,
-            Authentication authentication) {
+            @RequestBody ChatMessagePayload payload) {
         try {
-            chatMessageService.sendMessage(chatMessage);
+            chatMessageService.sendMessage(payload);
             return ResponseEntity.ok("Message cued successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
