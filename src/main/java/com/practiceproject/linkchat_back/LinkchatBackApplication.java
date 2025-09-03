@@ -21,10 +21,10 @@ public class LinkchatBackApplication {
 //	@Bean
 //	CommandLineRunner init(UserRepository repo, BCryptPasswordEncoder passwordEncoder) {
 //		return args -> {
-//			if (repo.findByUsername("admin3") == null) {
+//			if (repo.findByUsername("admin") == null) {
 //				User admin = new User();
-//				admin.setUsername("admin3");
-//				admin.setPassword(passwordEncoder.encode("mysecretpass"));
+//				admin.setUsername("admin");
+//				admin.setPassword(passwordEncoder.encode("123456"));
 //				repo.save(admin);
 //			}
 //		};
