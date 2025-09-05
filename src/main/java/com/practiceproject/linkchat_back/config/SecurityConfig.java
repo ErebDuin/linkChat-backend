@@ -36,7 +36,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("http://localhost:5173", "https://fs-dev.portnov.com"));
+        config.setAllowedOriginPatterns(List.of("http://localhost:5173", "https://fs-dev.portnov.com", "http://localhost:8080"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -56,14 +56,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/api/auth").permitAll()
-                        .requestMatchers("/ui/admin-login", "/js/**", "/styles/**", "/v3/**").permitAll()
+                        .requestMatchers("/ui/admin-login", "/ui/admin-register/**", "/js/**", "/styles/**", "/images/**", "/favicon.ico", "/v3/**").permitAll()
                         .requestMatchers("/api/swagger-ui.html", "/api/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
 
                 )
                 .formLogin(form -> form
                         .loginPage("/ui/admin-login")
-                        .defaultSuccessUrl("/ui/dashboard", true)
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .logout(logout -> logout

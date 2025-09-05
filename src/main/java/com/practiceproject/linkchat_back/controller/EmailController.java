@@ -43,28 +43,4 @@ public class EmailController {
             e.printStackTrace();
         }
     }
-
-    // ToEmailAddress, //Subject, //TemplateName, //List<String> TemplateVariables
-
-    @PostMapping("/api/sendInvite")
-    public void sendInvite(@RequestParam String to,
-                           @RequestParam String username,
-                           @RequestParam String link,
-                           @RequestParam(defaultValue = "24") int ttlHours) {
-        try {
-            emailService.sendInvite(to, username, link, ttlHours);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    @PostMapping("/api/chatTitleUpdated")
-    public void chatTitleUpdated(@RequestParam String to,
-                                 @RequestParam String chatTitle,
-                                 @RequestParam String link) {
-        try {
-            emailService.sendChatTitleUpdatedEmail(to, chatTitle, link);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

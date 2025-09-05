@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register Admin - LinkChat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" th:href="@{/favicon.ico?v=2}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/styles/admin-login.css}"/>
+</head>
+<body>
+<div class="center">
+    <h1>Register New Admin</h1>
+    <form th:action="@{/admin/register}" method="post">
+
+        <!-- Username -->
+        <div class="txt_field">
+            <input type="text" name="username" required>
+            <span></span>
+            <label>Username</label>
+        </div>
+
+        <!-- Email -->
+        <div class="txt_field">
+            <input type="email" name="email" required>
+            <span></span>
+            <label>Email</label>
+        </div>
+
+        <!-- Password -->
+        <div class="txt_field">
+            <input type="password" name="password" id="password" required>
+            <span></span>
+            <label>Password</label>
+            <span class="toggle-password" onclick="togglePassword()">👁️</span>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="txt_field">
+            <input type="password" name="confirmPassword" required>
+            <span></span>
+            <label>Confirm Password</label>
+        </div>
+
+        <!-- Submit -->
+        <input type="submit" value="Register Admin">
+
+        <!-- Already have account -->
+        <div class="pass">
+            <a th:href="@{/ui/admin-login}">Already have an account? Login</a>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    function togglePassword() {
+        const pwField = document.getElementById("password");
+        if (pwField.type === "password") {
+            pwField.type = "text";
+        } else {
+            pwField.type = "password";
+        }
+    }
+</script>
+</body>
+</html>
