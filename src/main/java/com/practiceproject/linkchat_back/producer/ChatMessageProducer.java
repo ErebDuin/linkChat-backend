@@ -14,10 +14,10 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class ChatMessageProducer {
     private static final String MESSAGE_QUEUE = "LinkChatQueueChatMessages";
-    private static final String HOST = "b-188e46d3-f93f-40b3-aed8-4bb2c372cff3.mq.us-east-2.on.aws";
-    private static final int PORT = 5671;
-    private static final String USERNAME = "linkchat";
-    private static final String PASSWORD = "LinkChat.2025!";
+    private static final String HOST = "localhost";
+    private static final int PORT = 5672;
+    private static final String USERNAME = "guest";
+    private static final String PASSWORD = "guest";
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -27,7 +27,7 @@ public class ChatMessageProducer {
         factory.setPort(PORT);
         factory.setUsername(USERNAME);
         factory.setPassword(PASSWORD);
-        factory.useSslProtocol(SSLContext.getDefault());
+//        factory.useSslProtocol(SSLContext.getDefault());
 
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
