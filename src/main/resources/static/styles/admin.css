@@ -23,6 +23,9 @@ body{
   border: 1px solid #4631A0;
   box-shadow: 10px 10px 15px rgba(0,0,0,0.05);
 }
+#registerAdminContainer{
+  width: 580px;
+ }
 .center h1{
   text-align: center;
   padding: 20px 0;
@@ -47,13 +50,7 @@ form .txt_field{
   outline: none;
 }
 #password{
-  width: 90%;
-  padding: 0 5px;
-  height: 40px;
-  font-size: 16px;
-  border: none;
-  background: none;
-  outline: none;
+  padding: 0 30px 0 5px;
 }
 .txt_field label{
   position: absolute;
@@ -86,8 +83,9 @@ form .txt_field{
 }
 .toggle-password{
   position: absolute;
-  top: 55%;
-  right: 10%;
+  top: 50%;
+  right: 0%;
+  transform: translateY(-50%);
   color: #a6a6a6;
 }
 .toggle-password:hover{
@@ -161,7 +159,7 @@ input[type="submit"]:active{
 }
 
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
   .center, .modal-content {
     width: 95%;
     min-width: unset;

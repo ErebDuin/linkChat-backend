@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/ui")
-public class AdminLoginPageController {
-    private static final Logger logger = LoggerFactory.getLogger(AdminLoginPageController.class);
+public class AdminController {
+    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
     @GetMapping("/admin-login")
     public String login() {
