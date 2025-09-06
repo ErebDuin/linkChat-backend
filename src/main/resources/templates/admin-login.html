@@ -1,28 +1,36 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>LinkChat</title>
+        <title>LinkChat Login</title>
         <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <link rel="icon" th:href="@{/favicon.ico?v=2}" type="image/x-icon"/>
-        <link rel="stylesheet" th:href="@{/styles/admin-login.css}"/>
+        <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+        <link rel="stylesheet" th:href="@{/styles/admin.css}"/>
     </head>
     <body>
         <div class="center">
             <h1>Admin Login</h1>
             <form th:action="@{/ui/admin-login}" method="post">
+
+                <!-- Username -->
                 <div class="txt_field">
                     <input type="text" name="username" required>
                     <span></span>
                     <label>Username</label>
                 </div>
+
+                <!-- Password -->
                 <div class="txt_field">
-                    <input type="password" id="password" name="password" required>
+                    <input class="password-field" type="password" id="password" name="password" required>
                     <span></span>
                     <label>Password</label>
+                    <div  class="fa-solid fa-eye toggle-password" id="toggleIcon" onclick="togglePassword()"></div>
                 </div>
-                <div  class="fa-solid fa-eye toggle-password" id="toggleIcon" onclick="togglePassword()"></div>
+
+                <!-- Submit -->
                 <input type="submit" value="Login">
+
+                <!-- Forgot Password -->
                 <div class="pass" onclick="openPopup()">Forgot Password?</div>
             </form>
         </div>
