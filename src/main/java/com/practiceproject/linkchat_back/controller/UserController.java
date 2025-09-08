@@ -1,6 +1,7 @@
 package com.practiceproject.linkchat_back.controller;
 
 import com.practiceproject.linkchat_back.dtos.UserEditDto;
+import com.practiceproject.linkchat_back.enums.UserRole;
 import com.practiceproject.linkchat_back.model.User;
 import com.practiceproject.linkchat_back.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class UserController {
             model.addAttribute("errorMessage", "Database is not available" + e.getMessage());
             model.addAttribute("users", Collections.emptyList());
         }
-        return "UsersManagement";
+        return "users-management";
     }
 
     /**
@@ -78,9 +79,8 @@ public class UserController {
             userRepository.findById(id).ifPresentOrElse(user -> {
                 UserEditDto dto = new UserEditDto();
                 dto.setId(user.getId());
-                dto.setName(user.getName());
                 dto.setEmail(user.getEmail());
-                dto.setRole(user.getRole());
+                dto.setRole(user.getRole().toString());
                 dto.setActive(user.isActive());
                 model.addAttribute("userEditDto", dto);
             }, () -> model.addAttribute("errorMessage", "User not found."));
@@ -118,9 +118,8 @@ public class UserController {
                 return "edit-user";
             }
             userRepository.findById(userEditDto.getId()).ifPresentOrElse(user -> {
-                user.setName(userEditDto.getName());
                 user.setEmail(userEditDto.getEmail());
-                user.setRole(userEditDto.getRole());
+                user.setRole(UserRole.valueOf(userEditDto.getRole()));
                 user.setActive(userEditDto.isActive());
                 userRepository.save(user);
             }, () -> {
@@ -199,9 +198,8 @@ public class UserController {
                 return "edit-user";
             }
             User user = new User();
-            user.setName(userEditDto.getName());
             user.setEmail(userEditDto.getEmail());
-            user.setRole(userEditDto.getRole());
+            user.setRole(UserRole.valueOf(userEditDto.getRole()));
             user.setActive(userEditDto.isActive());
             userRepository.save(user);
 
