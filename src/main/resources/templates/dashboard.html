@@ -3,17 +3,22 @@
       layout:decorate="~{layout}">
 <head>
     <title>Dashboard</title>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/styles/chats-management.css}"/>
 </head>
 <body>
 <main layout:fragment="content" class="main">
-    <div th:if="${errorMessage}" class="error-message">
-        <p th:text="${errorMessage}" style="color: red; font-weight: bold;"></p>
-    </div>
-    <div class="dashboard-stats" th:unless="${errorMessage}">
-        <p>Users: <span th:text="${totalUsers}">0</span></p>
-        <p>Total Chats: <span th:text="${totalChats}">0</span></p>
-        <p>Total Messages: <span th:text="${totalMessages}">0</span></p>
+    <div class="main-container">
+        <div th:if="${errorMessage}" class="error-message">
+            <p th:text="${errorMessage}" style="color: red; font-weight: bold;"></p>
+        </div>
+        <div class="dashboard-stats" th:unless="${errorMessage}">
+            <p>Users: <span th:text="${totalUsers}">0</span></p>
+            <p>Total Chats: <span th:text="${totalChats}">0</span></p>
+            <p>Total Messages: <span th:text="${totalMessages}">0</span></p>
+        </div>
     </div>
 </main>
 </body>

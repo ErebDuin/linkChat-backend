@@ -1,109 +1,125 @@
-/* Main container and body styling */
 body {
-    background-color: #f5f5f5;
+    background: #f4f4f4;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
-
 .main-container {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    position: relative; /* Add this to position the button relative to this container */
-}
-
-/* Header with title and button styling */
-.main-container h1 {
-    margin-bottom: 20px;
-    font-size: 24px;
-}
-
-/* New Chat button positioning and styling */
-.action-button.primary {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #E4FFE7;
-    color: #3A55B7;
-    border: 1px solid #31A03D;
-    padding: 8px 15px;
+    max-width: 100%;
+    background: #fff;
+    padding: 15px;
     border-radius: 5px;
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 14px;
+    box-shadow: 10px 10px 15px rgba(0,0,0,0.05);
 }
-
-.action-button.primary:hover {
-    background-color: #f5f5f5;
-}
-
-/* Chat list styling */
-.chats-list {
-    margin-top: 20px;
-    background-color: white;
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.chat-item {
+.header-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid #e0e0e0;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    padding: 0 8px; /* minimal horizontal padding for header only */
 }
-
-.chat-item:last-child {
-    border-bottom: none;
+.header-row h2 {
+    margin: 0;
+    font-size: 1.35em;
+    font-weight: 600;
 }
-
-.chat-info {
-    display: flex;
-    flex-direction: column;
+.new-chat-btn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin: 0;
 }
-
-.chat-name {
-    font-weight: bold;
-    margin-bottom: 5px;
+.new-chat-btn:hover {
+    background: #1d4ed8;
 }
-
-.chat-link {
-    color: #666;
-    font-size: 0.9em;
+.chat-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    margin: 0;
 }
-
-.chat-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.chat-table thead {
+    background: #f9fafb;
+    border-bottom: 2px solid #e5e7eb;
 }
-
-.status-badge {
-    padding: 5px 15px;
-    border-radius: 15px;
-    font-size: 0.8em;
-    font-weight: normal;
+.chat-table th, .chat-table td {
+    padding: 14px 18px;
+    vertical-align: middle;
+    text-align: left;
 }
-
-.status-badge.active {
-    background-color: #77c997;
-    color: white;
+.chat-table th {
+    font-weight: 600;
+    color: #374151;
+    letter-spacing: 0.02em;
 }
-
-.status-badge.inactive {
-    background-color: #ff9f9f;
-    color: white;
+.chat-table tr:not(:last-child) {
+    border-bottom: 1px solid #f1f5f9;
 }
-
-.settings-button {
-    background-color: white;
-    border: 1px solid #ccc;
-    color: #333;
-    padding: 5px 15px;
-    border-radius: 5px;
+.chat-name a {
+    color: #2a7ae2;
     text-decoration: none;
-    font-size: 0.9em;
+    font-weight: bold;
+    font-size: 1.1em;
 }
-
+.chat-name a:hover {
+    text-decoration: underline;
+}
+.status-badge {
+    padding: 4px 14px;
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 13px;
+    display: inline-block;
+    min-width: 64px;
+    text-align: center;
+}
+.status-badge.active {
+    background-color: #34d399;
+    color: #fff;
+}
+.status-badge.inactive {
+    background-color: #d1d5db;
+    color: #fff;
+}
+.settings-button {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    margin-left: 12px;
+}
 .settings-button:hover {
-    background-color: #f5f5f5;
+    text-decoration: underline;
+    color: #1d4ed8;
+}
+@media (max-width: 700px) {
+    .main-container {
+        margin: 0;
+        padding: 8px 2px;
+        max-width: 100%;
+    }
+    .chat-table th, .chat-table td {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+    .chat-table {
+        font-size: 13px;
+        width: 100%;
+    }
+    .header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
 }

@@ -59,7 +59,7 @@ body {
     margin: 10px 0;
 }
 
-.logout-link-btn {
+button {
     background: #3A55B7;
     color: #fff;
     border: none;
