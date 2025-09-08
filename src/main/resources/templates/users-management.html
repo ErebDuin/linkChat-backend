@@ -16,7 +16,7 @@
         <table class="user-table">
             <thead>
             <tr>
-                <th>Name</th>
+                <th>Username</th>
                 <th>Email</th>
                 <th>Role</th>
                 <th>Status</th>
@@ -25,7 +25,7 @@
             </thead>
             <tbody>
             <tr th:each="user : ${users}">
-                <td th:text="${user.name}">Name</td>
+                <td th:text="${user.username}">Username</td>
                 <td>
                     <span th:text="${#strings.substringBefore(user.email, '@')}">username</span><br>
                     <span class="email" th:text="'@' + ${#strings.substringAfter(user.email, '@')}">@example.com</span>

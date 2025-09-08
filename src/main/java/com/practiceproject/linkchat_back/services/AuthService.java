@@ -16,7 +16,7 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
 
     public boolean authenticate(String username, String rawPassword) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
             return false;
         }
