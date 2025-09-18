@@ -1,9 +1,17 @@
-package com.practiceproject.linkchat_back.controller;
+package com.practiceproject.linkchat_back.viewController;
 
 import com.practiceproject.linkchat_back.dtos.UserEditDto;
+import com.practiceproject.linkchat_back.dtos.AdminRegistrationDto;
+import com.practiceproject.linkchat_back.dtos.UserRegistrationDto;
 import com.practiceproject.linkchat_back.enums.UserRole;
+import com.practiceproject.linkchat_back.exceptions.EmailAlreadyExistsException;
+import com.practiceproject.linkchat_back.exceptions.PasswordMismatchException;
 import com.practiceproject.linkchat_back.model.User;
 import com.practiceproject.linkchat_back.repository.UserRepository;
+import com.practiceproject.linkchat_back.services.UserService;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -11,10 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.Collections;
 
@@ -34,10 +39,15 @@ import java.util.Collections;
  */
 
 @Controller
+@RequestMapping("/ui")
 public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * Displays the list of users.
@@ -47,12 +57,13 @@ public class UserController {
      * @return View name for rendering
      */
 
-    @GetMapping("/ui/user")
+    @GetMapping("/user")
     public String showUsers(Model model) {
 
         try {
             model.addAttribute("users", userRepository.findAll());
             model.addAttribute("userEditDto", new UserEditDto());
+            model.addAttribute("registrationDto", new UserRegistrationDto());
         } catch (DataAccessException e) {
             model.addAttribute("errorMessage", "Database is not available" + e.getMessage());
             model.addAttribute("users", Collections.emptyList());
@@ -69,7 +80,7 @@ public class UserController {
      * @return View name for rendering
      */
 
-    @GetMapping("/ui/edit-user")
+    @GetMapping("/edit-user")
     public String showEditUserForm(@RequestParam("id") Long id, Model model) {
         try {
             if (id == null) {
@@ -101,7 +112,7 @@ public class UserController {
      * @param model       Model to pass attributes to the view
      * @return View name for rendering
      */
-    @PostMapping("/ui/edit-user")
+    @PostMapping("/edit-user")
     public String editUser(@ModelAttribute("userEditDto") UserEditDto userEditDto,
                            BindingResult br, Model model) {
         try {
@@ -146,7 +157,7 @@ public class UserController {
      * @param model Model to pass attributes to the view
      * @return View name for rendering
      */
-    @PostMapping("/ui/delete-user")
+    @PostMapping("/delete-user")
     public String deleteUser(@RequestParam Long id, Model model) {
         try {
             userRepository.deleteById(id);
@@ -168,8 +179,8 @@ public class UserController {
      * @param model Model to pass attributes to the view
      * @return View name for rendering
      */
-    @GetMapping("/ui/add-user")
-    public String showAddUserForm(Model model) {
+    @GetMapping("/add-user")
+    public String displayFormAddUser(Model model) {
         model.addAttribute("userEditDto", new UserEditDto());
         return "edit-user";
     }
@@ -178,39 +189,28 @@ public class UserController {
      * Handles the form submission for adding a new user.
      * Validates input and saves the new user to the database.
      *
-     * @param userEditDto DTO containing user data
-     * @param br BindingResult for validation errors
+     * @param registrationDto DTO containing user data
+     * @param result BindingResult for validation errors
      * @param model Model to pass attributes to the view
      * @return View name for rendering
      */
-    @PostMapping("/ui/add-user")
-    public String addUser(@ModelAttribute("userEditDto") UserEditDto userEditDto,
-                          BindingResult br, Model model) {
+    @PostMapping("/add-user")
+    public String addUser(@ModelAttribute @Valid UserRegistrationDto registrationDto,
+                          BindingResult result,
+                          Model model
+    ) {
+        if (result.hasErrors()) {
+            return "edit-user";
+        }
         try {
-            if (br.hasErrors()) {
-                model.addAttribute("userEditDto", userEditDto);
-                return "edit-user";
-            }
-            if (userEditDto.getName() == null || userEditDto.getName().isBlank() ||
-                    userEditDto.getEmail() == null || userEditDto.getEmail().isBlank()) {
-                model.addAttribute("errorMessage", "Name and Email are required.");
-                model.addAttribute("userEditDto", userEditDto);
-                return "edit-user";
-            }
-            User user = new User();
-            user.setEmail(userEditDto.getEmail());
-            user.setRole(UserRole.valueOf(userEditDto.getRole()));
-            user.setActive(userEditDto.isActive());
-            userRepository.save(user);
-
-            model.addAttribute("successMessage", "User added successfully!");
-            model.addAttribute("redirectAfter", "/ui/user");
-            return "edit-user";
-        } catch (DataAccessException ex) {
-            model.addAttribute("errorMessage", "Database error: " + ex.getMessage());
-            return "edit-user";
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Error adding user: " + e.getMessage());
+            userService.saveNewUser(registrationDto);
+            model.addAttribute("registrationDto", new UserRegistrationDto());
+            model.addAttribute("successMessage", "New user registered successfully!");
+            logger.debug("New user registered successfully: {}", registrationDto.getUsername());
+            return "redirect:/ui/user";
+        } catch (PasswordMismatchException | EmailAlreadyExistsException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            logger.error("Error during saving new user: {}", e.getMessage());
             return "edit-user";
         }
     }

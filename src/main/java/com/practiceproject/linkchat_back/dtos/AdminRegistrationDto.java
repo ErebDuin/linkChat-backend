@@ -1,9 +1,8 @@
 package com.practiceproject.linkchat_back.dtos;
 
-import com.practiceproject.linkchat_back.enums.UserRole;
 import jakarta.validation.constraints.*;
 
-public class UserRegistrationDto {
+public class AdminRegistrationDto {
 
     @NotBlank
     private String username;
@@ -12,17 +11,15 @@ public class UserRegistrationDto {
     private String email;
     private String password;
     private String confirmPassword;
-    private UserRole role;
 
-    public UserRegistrationDto() {
+    public AdminRegistrationDto() {
     }
 
-    public UserRegistrationDto(String username, String email, String password, String confirmPassword, UserRole role) {
+    public AdminRegistrationDto(String username, String email, String password, String confirmPassword) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.confirmPassword = confirmPassword;
-        this.role = role;
     }
 
     public String getUsername() {
@@ -55,13 +52,5 @@ public class UserRegistrationDto {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
     }
 }

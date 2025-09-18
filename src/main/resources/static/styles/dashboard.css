@@ -9,7 +9,7 @@ body {
 }
 
 .header {
-    background: #3A55B7;
+    background: #3C67C3;
     color: #fff;
     display: flex;
     align-items: center;
@@ -38,7 +38,7 @@ body {
 }
 
 .footer {
-    background: #B1C2FD;
+    background: #829ED9;
     color: #000;
     padding: 10px 15px;
     margin-top: auto;

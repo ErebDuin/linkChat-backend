@@ -1,6 +1,6 @@
 package com.practiceproject.linkchat_back.controller;
 
-import com.practiceproject.linkchat_back.controller.UserController;
+import com.practiceproject.linkchat_back.viewController.UserController;
 import com.practiceproject.linkchat_back.dtos.UserEditDto;
 import com.practiceproject.linkchat_back.model.User;
 import com.practiceproject.linkchat_back.repository.UserRepository;
@@ -10,7 +10,6 @@ import org.mockito.*;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
