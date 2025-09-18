@@ -10,7 +10,7 @@
     <body>
         <div class="center" id="registerAdminContainer">
             <h1>Register New Admin</h1>
-            <form th:action="@{/ui/admin-register}" method="post">
+            <form th:action="@{/ui/admin-register}" method="post" th:object="${AdminRegistrationDto}">
 
                 <!-- Username -->
                 <div class="txt_field">
