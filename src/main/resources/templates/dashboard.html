@@ -6,11 +6,11 @@
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
-    <link rel="stylesheet" th:href="@{/styles/chats-management.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/main-ui.css}"/>
 </head>
 <body>
 <main layout:fragment="content" class="main">
-    <div class="main-container">
+    <div class="main-container dashboard">
         <div th:if="${errorMessage}" class="error-message">
             <p th:text="${errorMessage}" style="color: red; font-weight: bold;"></p>
         </div>

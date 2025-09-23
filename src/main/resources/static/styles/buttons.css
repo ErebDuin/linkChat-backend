@@ -1,0 +1,58 @@
+/* --BUTTON DESIGN-- */
+/* Button */
+.action-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px 20px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 12px;
+    color: #3C67C3;
+    cursor: pointer;
+}
+
+/* Primary */
+.primary {
+    border: 1px solid #54A031;
+    background-color: #D4EEC8;
+}
+.primary:hover {
+    transform: none;
+}
+.primary:active {
+    background-color: #54A031;
+    transform: scale(0.98);
+    color: #FFFFFF;
+}
+
+/* Secondary */
+.secondary {
+    border: 1px solid #3C67C3;
+    background-color: #A5B9E3;
+}
+.secondary:hover {
+    transform: none;
+}
+.secondary:active {
+    background-color: #3C67C3;
+    transform: scale(0.98);
+    color: #FFFFFF;
+}
+
+/* Danger */
+.danger {
+    border: 1px solid #C33C67;
+    background-color: #EEC8D4;
+}
+.action-button.danger:hover {
+    transform: none;
+}
+.action-button.danger:active {;
+    background-color: #C33C67;
+    transform: scale(0.98);
+    color: #FFFFFF;
+}
