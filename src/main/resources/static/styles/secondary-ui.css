@@ -84,7 +84,8 @@ body {
   justify-self: start;
   width: 100%;
 }
-.field-box button[name="save-n-send"] {
+.field-box button[name="save-n-send"],
+.field-box button[name="delete"] {
   justify-self: start;
   width: 120px;
 }

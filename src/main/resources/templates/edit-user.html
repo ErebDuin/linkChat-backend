@@ -1,46 +1,49 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/styles/secondary-ui.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/buttons.css}"/>
     <title>Edit User</title>
-    <link rel="stylesheet" th:href="@{/styles/edit-user.css}">
 </head>
-
 <body>
 <main layout:fragment="content" class="main">
-    <h2>Edit User</h2>
+    <div class="main-container">
+        <h1>Edit User</h1>
+        <form id="editForm" th:action="@{/ui/edit-user}" th:object="${userEditDto}" method="post">
 
-    <!-- ── main form ── -->
-    <form id="editForm"
-          th:action="@{/ui/edit-user}"
-          th:object="${userEditDto}"
-          method="post">
+            <input type="hidden" th:field="*{id}">
 
-        <input type="hidden" th:field="*{id}">
-
-        <label for="name">Name</label>
-        <input id="name" type="text" th:field="*{name}" required>
-
-        <label for="email">Email</label>
-        <input id="email" type="email" th:field="*{email}" required>
-
-        <label for="role">Role</label>
-        <select id="role" th:field="*{role}">
-            <option value="" hidden></option>
-            <option value="ADMIN">Admin</option>
-            <option value="USER">User</option>
-            <option value="TEST">Test</option>
-        </select>
-
-        <label for="active">Active</label>
-        <input id="active" type="checkbox" th:field="*{active}">
-
-        <div class="btn-row">
-            <button type="submit" class="btn-green">Save</button>
-            <button type="button" id="deleteBtn" class="btn-red">Delete</button>
-        </div>
-    </form>
+            <div class="field-box">
+                <label for="name">Username</label>
+                <input id="name" type="text" th:field="*{name}" required>
+            </div>
+            <div class="field-box">
+                <label for="email">Email</label>
+                <input id="email" type="email" th:field="*{email}" required>
+            </div>
+            <div class="field-box">
+                <label for="role">Role</label>
+                <select id="role" th:field="*{role}">
+                    <option value="" disabled hidden>Select role</option>
+                    <option value="ADMIN">Admin</option>
+                    <option value="USER">User</option>
+                </select>
+            </div>
+            <div class="field-box">
+                <label for="active">Active</label>
+                <input id="active" type="checkbox" th:field="*{active}">
+            </div>
+            <div class="field-box">
+                <button type="submit" class="action-button primary">Save</button>
+                <button type="button" id="deleteBtn" name="delete" class="action-button danger">Delete</button>
+                <button type="button" name="cancel" class="action-button danger"
+                        th:onclick="'window.location.href=\'' + @{/ui/user} + '\''">Cancel</button>
+            </div>
+        </form>
+    </div>
 
     <dialog id="confirmDialog" class="confirm-dialog">
         <h3>Delete user?</h3>
