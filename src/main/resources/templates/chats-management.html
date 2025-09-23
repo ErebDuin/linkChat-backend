@@ -6,14 +6,14 @@
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
-    <link rel="stylesheet" th:href="@{/styles/chats-management.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/main-ui.css}"/>
 </head>
 <body>
 <main layout:fragment="content" class="main">
     <div class="main-container">
         <div class="header-row">
-            <h2>Chats Management</h2>
-            <button type="button" class="new-chat-btn"
+            <h1>Chats Management</h1>
+            <button type="button" class="action-button primary"
                     onclick="window.location.href='/ui/new-chat'">New Chat</button>
         </div>
         <div th:if="${errorMessage}" class="error-message">
@@ -22,7 +22,7 @@
         <table class="chat-table" th:unless="${errorMessage}">
             <thead>
             <tr>
-                <th>Title</th>
+                <th>Chat name</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
@@ -30,14 +30,15 @@
             <tbody>
             <tr th:each="chat : ${chats}">
                 <td class="chat-name">
-                    <a th:href="'http://localhost:5173/chat/' + ${chat.link}" th:text="${chat.title}">Chat Title</a>
+                    <a th:href="'http://localhost:5173/chat/' + ${chat.link}" th:text="${chat.title}">Chat name</a>
                 </td>
                 <td>
-                        <span class="status-badge" th:classappend="${chat.active} ? 'active' : 'inactive'"
-                              th:text="${chat.active} ? 'Active' : 'Inactive'">Status</span>
+                    <span class="status" th:classappend="${chat.active} ? 'active' : 'inactive'"
+                          th:text="${chat.active} ? 'Active' : 'Inactive'">Status</span>
                 </td>
                 <td>
-                    <a class="settings-button" th:href="@{'/ui/chat-settings?id=' + ${chat.chatId}}">Settings</a>
+                    <button type="button" name="settings" class="action-button secondary"
+                            th:onclick="'window.location.href=\'' + @{'/ui/chat-settings'(id=${chat.chatId})} + '\''">Settings</button>
                 </td>
             </tr>
             </tbody>

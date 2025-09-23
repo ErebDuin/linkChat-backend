@@ -30,7 +30,7 @@ body {
     font-weight: 700;
     font-size: 24px;
 }
-.user-table {
+table {
     width: 100%;
     display: table;
     border-collapse: collapse;
@@ -38,37 +38,48 @@ body {
     background: #fff;;
     overflow: hidden;
 }
-.user-table tr{
+table tr{
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 equal columns */
 }
-.user-table thead {
+table thead {
     background: #CFC8EE;
     border-bottom: 1px solid #4631A0;
 }
-.user-table th,
-.user-table td {
+table th,
+table td {
     padding: 10px;
     vertical-align: middle;
     text-align: center;
 }
-.user-table th {
+table th {
     font-weight: 600;
     color: #374151;
     letter-spacing: 0.02em;
 }
-.user-table tr:not(:last-child) {
+table tr:not(:last-child) {
     border-bottom: 1px solid #f1f5f9;
 }
 
-.user-table th:nth-child(5),
-.user-table td:nth-child(5) {
+table th:nth-child(5),
+table th:nth-child(3),
+table td:nth-child(5),
+table td:nth-child(3) {
     white-space: nowrap; /* prevents wrapping */
 }
-.user-table td:nth-child(5) {
+table td:nth-child(5),
+table td:nth-child(3) {
     display: flex;
     justify-content: center; /* keeps buttons centered */
     gap: 25px; /* space between buttons */
+}
+.chat-name a {
+    color: #2a7ae2;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.chat-name a:hover {
+    text-decoration: underline;
 }
 .email {
     color: #888;
@@ -91,35 +102,32 @@ body {
     background-color: #C33C67;
     color: #fff;
 }
-.edit-link {
-    color: #2563eb;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
-}
-.edit-link:hover {
-    text-decoration: underline;
-    color: #1d4ed8;
-}
 
-/* Button design */
+/* --BUTTON DESIGN-- */
+/* Primary */
 .action-button.primary {
     margin: 0;
-    width: 76px;
-    height: 30px;
+    width: 84px;
+    height: 33px;
     border: 1px solid #54A031;
     border-radius: 5px;
     background-color: #D4EEC8;
     text-align: center;
-    font-size: 12px;
+    font-size: 13px;
     color: #3C67C3;
     cursor: pointer;
+}
+.action-button.primary:hover {
+    transform: none;
 }
 .action-button.primary:active {
     background-color: #54A031;
     transform: scale(0.98);
     color: #FFFFFF;
 }
+
+
+/* Secondary */
 .action-button.secondary {
     margin: 0;
     width: 76px;
@@ -131,14 +139,19 @@ body {
     font-size: 12px;
     color: #3C67C3;
         -webkit-text-stroke: 0.1px #000000;
-
     cursor: pointer;
+}
+.action-button.secondary:hover {
+    transform: none;
 }
 .action-button.secondary:active {
     background-color: #3C67C3;
     transform: scale(0.98);
     color: #FFFFFF;
 }
+
+
+/* Danger */
 .action-button.danger {
     margin: 0;
     width: 76px;
@@ -150,11 +163,15 @@ body {
     color: #3C67C3;
     cursor: pointer;
 }
+.action-button.danger:hover {
+    transform: none;
+}
 .action-button.danger:active {;
     background-color: #C33C67;
     transform: scale(0.98);
     color: #FFFFFF;
 }
+
 
 @media (max-width: 700px) {
     .users-management-wrapper {
@@ -175,4 +192,21 @@ body {
         align-items: flex-start;
         gap: 12px;
     }
+}
+
+/* Element specific ui */
+
+.dashboard {
+  border: none;
+}
+
+.dashboard-stats {
+  margin: 12px 16px 24px 16px; /* extra bottom padding for spacing */
+}
+
+.user-table tr{
+    grid-template-columns: repeat(5, 1fr); /* 5 equal columns */
+}
+.chat-table tr{
+    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
 }

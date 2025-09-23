@@ -1,11 +1,17 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Poppins:wght@400;500;600&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
 
 body {
     margin: 0;
-    font-family: 'Roboto', sans-serif;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
 }
 
 .header {
@@ -37,6 +43,11 @@ body {
     text-decoration: none;
 }
 
+.nav-links a:hover,
+button:hover {
+    transform: scale(1.05);
+}
+
 .footer {
     background: #829ED9;
     color: #000;
@@ -60,7 +71,7 @@ body {
 }
 
 button {
-    background: #3A55B7;
+    background: #3C67C3;
     color: #fff;
     border: none;
     text-decoration: none;

@@ -3,7 +3,10 @@
       layout:decorate="~{layout}">
   <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/styles/new-chat.css}"/>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/styles/secondary-ui.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/buttons.css}"/>
+
     <title>New Chat</title>
   </head>
   <body>
@@ -12,7 +15,7 @@
         <h1>New Chat</h1>
         <form th:action="@{/ui/new-chat}" th:object="${chat}" method="post">
           <div class="field-box">
-            <label>Name</label>
+            <label>Chat name</label>
             <input type="text" name="chat-name" th:field="*{title}" required>
             <div class="error-message" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
           </div>
@@ -40,8 +43,8 @@
                      th:field="*{inviteEmails[__${iterStat.index}__].email}"
                      required />
               <div class="secondary-button-row">
-                <button type="button" class="plus-minus-button primary" onclick="addInvite()">+</button>
-                <button type="button" class="plus-minus-button danger" onclick="removeInvite(this)">-</button>
+                <button type="button" class="action-button primary" onclick="addInvite()">+</button>
+                <button type="button" class="action-button danger" onclick="removeInvite(this)">-</button>
               </div>
             </div>
           </div>
